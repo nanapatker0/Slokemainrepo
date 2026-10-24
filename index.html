@@ -125,7 +125,6 @@
             </FadeIn>
             
             <FadeIn delay={200}>
-              {/* FIX: Changed text-[2.5rem] to text-3xl min-[375px]:text-4xl to prevent clipping on mobile */}
               <h1 className="text-3xl min-[375px]:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-cinematic font-bold text-white mb-8 leading-tight">
                 Crafting <br className="md:hidden" />
                 <span className="relative inline-block w-full h-[1.2em] overflow-hidden align-bottom">
@@ -447,9 +446,10 @@
             }
           `}} />
 
-          <nav className={`fixed top-0 left-0 w-full z-[100] transition-colors duration-300 ${isScrolled ? 'bg-zinc-950/95 backdrop-blur-md shadow-lg shadow-black/50 border-b border-white/5' : 'bg-transparent'}`}>
+          {/* NAVBAR FIX: z-[110] pe set kiya taaki mobile menu (z-100) ke hamesha upar rahe aur glitch hat jaye */}
+          <nav className={`fixed top-0 left-0 w-full z-[110] transition-colors duration-300 ${isScrolled ? 'bg-zinc-950/95 backdrop-blur-md shadow-lg shadow-black/50 border-b border-white/5' : 'bg-transparent'}`}>
             <div className={`max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center transition-all duration-300 ${isScrolled ? 'h-16 md:h-20' : 'h-20 md:h-28'}`}>
-              <a href="#home" className="flex items-center text-2xl font-bold tracking-tighter text-white hover:text-pastel-blush transition-colors relative z-[101]">
+              <a href="#home" className="flex items-center text-2xl font-bold tracking-tighter text-white hover:text-pastel-blush transition-colors relative z-[111]">
                 SLOKE.
               </a>
 
@@ -463,26 +463,27 @@
               </div>
 
               <button 
-                className="md:hidden text-zinc-300 hover:text-white flex items-center relative z-[101]"
+                className="md:hidden text-zinc-300 hover:text-white flex items-center relative z-[111]"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
             </div>
-
-            <div className={`fixed inset-0 bg-zinc-950 z-[100] flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'}`}>
-              {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
-                <a 
-                  key={item} 
-                  href={`#${item.toLowerCase()}`} 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-4xl font-cinematic text-zinc-400 hover:text-pastel-blush transition-colors"
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
           </nav>
+
+          {/* MOBILE MENU FIX: Isko nav container se bahar nikal diya taaki scroll scroll/backdrop-blur me stuck na ho */}
+          <div className={`fixed inset-0 bg-zinc-950 z-[100] flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+            {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`} 
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-4xl font-cinematic text-zinc-400 hover:text-pastel-blush transition-colors"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
 
           <main className="cinematic-mesh w-full overflow-hidden">
             <HeroSection />
