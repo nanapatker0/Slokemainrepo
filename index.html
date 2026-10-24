@@ -41,6 +41,14 @@
     const Youtube = (p) => <Icon {...p}><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></Icon>;
     const Film = (p) => <Icon {...p}><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="7" y1="7" y2="7"/><line x1="2" x2="7" y1="17" y2="17"/><line x1="17" x2="22" y1="17" y2="17"/><line x1="17" x2="22" y1="7" y2="7"/></Icon>;
 
+    // --- Helper function to extract YouTube Thumbnail from link ---
+    const getYouTubeThumbnail = (url) => {
+      if (!url) return null;
+      // Extract video ID from different YouTube URL formats
+      const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+      return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
+    };
+
     // --- Custom Hooks ---
     const useIntersectionObserver = (options = { threshold: 0.1, triggerOnce: true }) => {
       const [isIntersecting, setIsIntersecting] = useState(false);
@@ -66,14 +74,14 @@
       return [ref, isIntersecting];
     };
 
-   // --- Data ---
+    // --- Data ---
     const PORTFOLIO_ITEMS = [
       { id: 1, title: 'Maidan', category: 'Street', type: 'photo', image: 'images/picture4.jpg' },
       { id: 2, title: 'Ujjain', category: 'Street', type: 'photo', image: 'images/picture3.jpg' },
       { id: 3, title: 'Quiet Hours', category: 'Street', type: 'photo', image: 'images/picture5.jpg' },
       { id: 4, title: 'Hardwork', category: 'Street', type: 'photo', image: 'images/picture6.jpg' },
       { id: 5, title: 'Distraction', category: 'Street', type: 'photo', image: 'images/picture7.jpg' },
-      { id: 6, title: 'Emptiness', category: 'Short Films', type: 'film', link: 'https://youtu.be/QHWUnIGle4g?si=OxezrAosSCZyKIt6' },
+      { id: 6, title: 'Emptiness', category: 'Short Films', type: 'film', link: 'https://youtu.be/QHWUnIGle4g?si=OxezrAosSCZyKIt6', image: 'images/picture8.jpg' },
     ];
 
     const CATEGORIES = ['All', 'Short Films', 'Street', 'Portraits'];
@@ -259,37 +267,65 @@
             </div>
 
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 auto-rows-[200px] sm:auto-rows-[250px] md:auto-rows-[400px]">
-              {filteredItems.map((item, index) => (
-                <FadeIn 
-                  key={item.id} 
-                  delay={index * 100} 
-                  className={`group relative rounded-lg md:rounded-xl overflow-hidden cursor-pointer ${
-                    index === 0 || index === 5 ? 'col-span-2 lg:col-span-2' : 'col-span-1'
-                  }`}
-                >
-                  <img 
-                    src={item.image} 
-                    alt={item.title} 
-                    className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300" />
-                  
-                  <div className="absolute inset-0 p-3 md:p-8 flex flex-col justify-between">
-                    <div className="self-end bg-zinc-950/60 backdrop-blur-sm p-2 md:p-3 rounded-full border border-white/10 text-white group-hover:text-pastel-peach transition-colors group-hover:scale-110 duration-300">
-                      {item.type === 'film' ? <Play size={16} className="md:w-5 md:h-5" /> : <Camera size={16} className="md:w-5 md:h-5" />}
-                    </div>
+              {filteredItems.map((item, index) => {
+                
+                // Fetch dynamic thumbnail if it's a YouTube link, else use default image
+                const displayImage = (item.type === 'film' && item.link) 
+                                      ? (getYouTubeThumbnail(item.link) || item.image) 
+                                      : item.image;
+
+                const CardContent = (
+                  <React.Fragment>
+                    <img 
+                      src={displayImage} 
+                      alt={item.title} 
+                      className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                      onError={(e) => {
+                        // Fallback incase high-res yt thumb is missing
+                        if (e.target.src.includes('maxresdefault')) {
+                          e.target.src = e.target.src.replace('maxresdefault', 'hqdefault');
+                        }
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     
-                    <div className="transform translate-y-2 md:translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <span className="text-pastel-sage text-[10px] md:text-xs font-semibold uppercase tracking-wider mb-1 md:mb-2 block">
-                        {item.category}
-                      </span>
-                      <h3 className="text-base sm:text-lg md:text-3xl font-cinematic font-bold text-white group-hover:text-pastel-blush transition-colors leading-tight">
-                        {item.title}
-                      </h3>
+                    <div className="absolute inset-0 p-3 md:p-8 flex flex-col justify-between pointer-events-none">
+                      <div className="self-end bg-zinc-950/60 backdrop-blur-sm p-2 md:p-3 rounded-full border border-white/10 text-white group-hover:text-pastel-peach transition-colors group-hover:scale-110 duration-300 pointer-events-auto">
+                        {item.type === 'film' ? <Play size={16} className="md:w-5 md:h-5" /> : <Camera size={16} className="md:w-5 md:h-5" />}
+                      </div>
+                      
+                      <div className="transform translate-y-2 md:translate-y-4 group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto">
+                        <span className="text-pastel-sage text-[10px] md:text-xs font-semibold uppercase tracking-wider mb-1 md:mb-2 block">
+                          {item.category}
+                        </span>
+                        <h3 className="text-base sm:text-lg md:text-3xl font-cinematic font-bold text-white group-hover:text-pastel-blush transition-colors leading-tight">
+                          {item.title}
+                        </h3>
+                      </div>
                     </div>
-                  </div>
-                </FadeIn>
-              ))}
+                  </React.Fragment>
+                );
+
+                return (
+                  <FadeIn 
+                    key={item.id} 
+                    delay={index * 100} 
+                    className={`group relative rounded-lg md:rounded-xl overflow-hidden cursor-pointer ${
+                      index === 0 || index === 5 ? 'col-span-2 lg:col-span-2' : 'col-span-1'
+                    }`}
+                  >
+                    {item.link ? (
+                      <a href={item.link} target="_blank" rel="noopener noreferrer" className="block w-full h-full absolute inset-0 z-10">
+                        {CardContent}
+                      </a>
+                    ) : (
+                      <div className="block w-full h-full absolute inset-0 z-10">
+                        {CardContent}
+                      </div>
+                    )}
+                  </FadeIn>
+                );
+              })}
             </div>
             
             {filteredItems.length === 0 && (
@@ -446,7 +482,6 @@
             }
           `}} />
 
-          {/* NAVBAR FIX: z-[110] pe set kiya taaki mobile menu (z-100) ke hamesha upar rahe aur glitch hat jaye */}
           <nav className={`fixed top-0 left-0 w-full z-[110] transition-colors duration-300 ${isScrolled ? 'bg-zinc-950/95 backdrop-blur-md shadow-lg shadow-black/50 border-b border-white/5' : 'bg-transparent'}`}>
             <div className={`max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center transition-all duration-300 ${isScrolled ? 'h-16 md:h-20' : 'h-20 md:h-28'}`}>
               <a href="#home" className="flex items-center text-2xl font-bold tracking-tighter text-white hover:text-pastel-blush transition-colors relative z-[111]">
@@ -471,7 +506,6 @@
             </div>
           </nav>
 
-          {/* MOBILE MENU FIX: Isko nav container se bahar nikal diya taaki scroll scroll/backdrop-blur me stuck na ho */}
           <div className={`fixed inset-0 bg-zinc-950 z-[100] flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out md:hidden ${mobileMenuOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'}`}>
             {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
               <a 
