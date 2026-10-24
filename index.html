@@ -1,359 +1,463 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Sloke | Filmmaker and photographer</title>
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, Play, Camera, Mail, ArrowRight, Instagram, Youtube, Film } from 'lucide-react';
 
-<!-- Favicon -->
-<link rel="icon" type="image/png" href="images/favicon.png">
+// --- Custom Hooks ---
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
-<style>
-/* PURE BLACK AND WHITE THEME */
-:root {
-  --bg: #ffffff;
-  --bg2: #f2f2f2;
-  --ink: #000000;
-  --muted: #666666;
-  --line: rgba(0, 0, 0, 0.2);
-  --accent: #000000;
-  --on: #ffffff;
-  --hdr: rgba(255, 255, 255, 0.9);
-  --f: "Syne", "Arial Black", system-ui, sans-serif;
-  color-scheme: light;
-  box-sizing: border-box;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
+// Hook for fade-in animations on scroll
+const useIntersectionObserver = (options = { threshold: 0.1, triggerOnce: true }) => {
+  const [isIntersecting, setIsIntersecting] = React.useState(false);
+  const ref = React.useRef(null);
 
-/* Auto Dark Mode support if user's phone is in Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --bg2: #0f0f0f;
-    --ink: #ffffff;
-    --muted: #aaaaaa;
-    --line: rgba(255, 255, 255, 0.2);
-    --accent: #ffffff;
-    --on: #000000;
-    --hdr: rgba(0, 0, 0, 0.9);
-    color-scheme: dark;
-  }
-}
+  React.useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
 
-*, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 64px); }
-html.lock { overflow: hidden; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); background: var(--hdr); backdrop-filter: blur(12px); z-index: 10; }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsIntersecting(true);
+        if (options.triggerOnce) observer.disconnect();
+      } else {
+        if (!options.triggerOnce) setIsIntersecting(false);
+      }
+    }, options);
 
-/* Enforce Grayscale on all images for pure B&W aesthetic */
-img, svg { max-width: 100%; filter: grayscale(100%); }
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [options]);
 
-a { color: inherit; text-decoration: none; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.wrap { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 48px); }
-.sec { padding: clamp(64px, 10vw, 120px) 0; }
-h2 { font: 800 clamp(2rem, 5vw, 3.5rem)/1.05 var(--f); letter-spacing: -.02em; margin: 0 0 .5em; }
+  return [ref, isIntersecting];
+};
 
-/* nav */
-.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(16px, 4vw, 48px); background: var(--hdr); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
-.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 800 1.45rem var(--f); letter-spacing: -.03em; }
-.logo img { flex: none; object-fit: contain; max-height: 40px; }
-.burger { width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-content: center; gap: 5px; padding: 0; }
-.burger i { display: block; width: 20px; height: 2px; background: currentColor; transition: transform .3s, opacity .2s; }
-.burger[aria-expanded=true] i:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.burger[aria-expanded=true] i:nth-child(2) { opacity: 0; }
-.burger[aria-expanded=true] i:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-.menu { position: fixed; inset: 0; z-index: 40; background: var(--bg); padding: calc(env(safe-area-inset-top, 0px) + 96px) clamp(20px, 6vw, 72px) calc(env(safe-area-inset-bottom, 0px) + 32px); display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; opacity: 0; visibility: hidden; transform: translateY(-12px); transition: opacity .3s, transform .3s, visibility 0s .3s; }
-.menu.open { opacity: 1; visibility: visible; transform: none; transition: opacity .3s, transform .3s; }
-.menu nav { display: grid; }
-.menu nav a { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: .18em 0; border-bottom: 1px solid var(--line); text-decoration: none; font: 800 clamp(2.3rem, 9vw, 5rem)/1.1 var(--f); letter-spacing: -.02em; }
-.menu nav a:hover { color: var(--muted); }
-.menu nav small { font: 400 .9rem system-ui, sans-serif; color: var(--muted); letter-spacing: 0; text-align: right; }
-.menu p { margin: 32px 0 0; color: var(--muted); }
+// --- Data ---
 
-/* hero - adjusted for shorter height and no patches */
-.hero { position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: flex-end; color: #ffffff; min-height: 60vh; }
-.still { position: absolute; inset: 0; z-index: 0; background: #000; }
-.still img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; z-index: 0; opacity: 0.8; }
-.still::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2)); z-index: 1; }
+const PORTFOLIO_ITEMS = [
+  { id: 1, title: 'The Vows', category: 'Wedding Films', type: 'film', image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=1000' },
+  { id: 2, title: 'Neon Symphony', category: 'Event Coverage', type: 'photo', image: 'https://images.unsplash.com/photo-1540039155732-684736e68531?auto=format&fit=crop&q=80&w=1000' },
+  { id: 3, title: 'Quiet Hours', category: 'Portraits', type: 'photo', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1000' },
+  { id: 4, title: 'Salt Season', category: 'Wedding Films', type: 'film', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1000' },
+  { id: 5, title: 'Faces of the Market', category: 'Portraits', type: 'photo', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1000' },
+  { id: 6, title: 'Rhythm & Light', category: 'Event Coverage', type: 'film', image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=1000' },
+];
 
-.hero-in { position: relative; z-index: 3; max-width: 1100px; width: 100%; padding: 0 clamp(20px, 6vw, 72px) clamp(40px, 8vh, 88px); }
-.hero h1 { font: 800 clamp(4rem, 15vw, 10rem)/.85 var(--f); letter-spacing: -.04em; margin: 0; text-transform: uppercase; }
-.sub { font: 600 clamp(1.1rem, 2.4vw, 1.6rem)/1.3 var(--f); margin: .7em 0 .4em; }
-.lede { max-width: 46ch; margin: 0 0 1.6rem; color: rgba(255, 255, 255, 0.8); }
-.btns { display: flex; flex-wrap: wrap; gap: 12px; }
-.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 24px; border-radius: 999px; border: 2px solid var(--accent); background: transparent; color: var(--ink); font: 700 1rem system-ui, sans-serif; text-decoration: none; cursor: pointer; transition: all 0.2s; }
-.btn.pri { background: var(--accent); color: var(--on); }
-.btn:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+const CATEGORIES = ['All', 'Wedding Films', 'Event Coverage', 'Portraits'];
 
-/* about */
-.about { display: grid; gap: 40px; }
-.portrait { position: relative; aspect-ratio: 4/5; border-radius: 0px; overflow: hidden; background: #000; border: 1px solid var(--line); }
-.portrait img { width: 100%; height: 100%; object-fit: cover; }
-.portrait .cap { left: 14px; right: auto; bottom: 12px; position: absolute; z-index: 2; color: #fff; background: rgba(0,0,0,0.6); padding: 4px 8px; font-size: 0.8rem; }
-.about p { max-width: 52ch; margin: 0 0 1em; color: var(--muted); font-size: 1.05rem; }
-.about p:first-of-type { color: var(--ink); font-size: 1.2rem; font-weight: 600; }
-.what { list-style: none; margin: 28px 0 0; padding: 0; border-top: 1px solid var(--line); }
-.what li { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-.what b { font-family: var(--f); text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
-.what span { color: var(--muted); text-align: right; font-size: 0.95rem; }
+// --- Reusable Components ---
 
-/* portfolio */
-.head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 20px; }
-.head p { margin: 0; color: var(--muted); }
-.chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.chip { min-height: 40px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 .95rem system-ui, sans-serif; cursor: pointer; transition: all 0.2s; }
-.chip[aria-pressed=true] { background: var(--accent); border-color: var(--accent); color: var(--on); }
-
-.grid { display: grid; grid-auto-flow: dense; gap: 16px; margin-top: 36px; }
-.card { position: relative; margin: 0; aspect-ratio: 4/3; border-radius: 0px; overflow: hidden; background: #000; display: block; border: 1px solid var(--line); }
-.card > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .6s; z-index: 0; opacity: 0.9; }
-.card:hover > img { transform: scale(1.05); opacity: 1; }
-
-.card a.vid-link { display: block; width: 100%; height: 100%; position: absolute; inset: 0; z-index: 1; }
-.card a.vid-link img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; opacity: 0.9; }
-.card:hover a.vid-link img { transform: scale(1.05); opacity: 1; }
-
-.card figcaption { position: absolute; inset: auto 0 0; display: flex; justify-content: space-between; align-items: end; gap: 12px; padding: 48px 18px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.9)); z-index: 2; pointer-events: none; color: #ffffff; }
-.card b { font: 700 1.15rem/1.2 var(--f); text-transform: uppercase; }
-.card span { font-size: .85rem; opacity: .8; white-space: nowrap; }
-
-/* Film Play Icon - strictly B&W */
-.card[data-c=film]::before { content: ""; position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 50%; background: rgba(0,0,0,0.7); border: 2px solid #ffffff; z-index: 3; pointer-events: none; }
-.card[data-c=film]::after { content: ""; position: absolute; top: 24px; right: 23px; width: 12px; height: 14px; background: #ffffff; clip-path: polygon(0 0, 100% 50%, 0 100%); z-index: 3; pointer-events: none; }
-
-@media(min-width: 560px) { .grid { grid-template-columns: repeat(2, 1fr); } .wide { grid-column: span 2; aspect-ratio: 16/9; } }
-@media(min-width: 860px) { .about { grid-template-columns: 5fr 6fr; gap: 72px; align-items: center; } }
-@media(min-width: 960px) { .grid { grid-template-columns: repeat(3, 1fr); } .wide { aspect-ratio: auto; } }
-
-/* footer */
-.foot { background: var(--bg2); border-top: 1px solid var(--line); padding: clamp(56px, 8vw, 96px) 0 28px; }
-.cta { font: 800 clamp(1.9rem, 5vw, 3.6rem)/1.05 var(--f); letter-spacing: -.02em; margin: 0 0 .35em; text-transform: uppercase; }
-.mail { font: 700 clamp(1.1rem, 2.6vw, 1.6rem) var(--f); color: var(--ink); text-underline-offset: .2em; text-decoration: underline; }
-.cols { display: grid; gap: 36px; margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--line); }
-.foot h3 { font: 800 1rem var(--f); margin: 0 0 14px; text-transform: uppercase; }
-.foot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.foot li a { color: var(--muted); text-decoration: none; font-weight: 500; }
-.foot li a:hover { color: var(--ink); text-decoration: underline; }
-.foot .brand p { margin: 12px 0 0; color: var(--muted); max-width: 32ch; }
-.soon li { display: flex; flex-direction: column; }
-.soon b { font-weight: 700; color: var(--ink); }
-.soon span { color: var(--muted); font-size: .9rem; }
-.sub-form { display: flex; gap: 8px; margin-top: 18px; }
-.sub-form input { flex: 1; min-width: 0; min-height: 46px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; }
-.note { margin: 8px 0 0; min-height: 1.5em; color: var(--ink); font-size: .9rem; font-weight: bold; }
-.legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
-.legal a { text-decoration: none; }
-.legal a:hover { color: var(--ink); }
-
-@media(min-width: 640px) { .cols { grid-template-columns: 1fr 1fr; } }
-@media(min-width: 1000px) { .cols { grid-template-columns: 1.3fr 1fr 1fr 1.6fr; } }
-@media(prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none!important; scroll-behavior: auto!important; } }
-</style>
-</head>
-<body>
-
-<header class="nav">
-  <a class="logo" href="#home" aria-label="Sloke, back to top">
-    <img src="images/logo.png" alt="Sloke Logo">
-  </a>
-  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
-</header>
-
-<div class="menu" id="menu">
-  <nav aria-label="Main">
-    <a href="#home">Home <small>Start here</small></a>
-    <a href="#about">About <small>Meet Sloke</small></a>
-    <a href="#portfolio">Portfolio <small>Films and photographs</small></a>
-    <a href="#contact">Contact <small>Start a project</small></a>
-  </nav>
-  <p>Say hello at <a href="mailto:hello@slokepandey.in">hello@slokepandey.in</a></p>
-</div>
-
-<main>
-<section class="hero" id="home">
-  <!-- Yaha picture1.jpg as a cover background image set hai -->
-  <div class="still">
-    <img src="images/picture1.jpg" alt="Cover background">
-  </div>
-  <div class="hero-in">
-    <h1>Sloke</h1>
-    <p class="sub">Filmmaker and photographer</p>
-    <p class="lede">Quiet, patient films and photographs about people, places and the light between them.</p>
-    <div class="btns">
-      <a class="btn pri" href="#portfolio">View portfolio</a>
-      <a class="btn" href="#contact">Get in touch</a>
+const FadeIn = ({ children, className = '', delay = 0 }) => {
+  const [ref, isVisible] = useIntersectionObserver();
+  return (
+    <div
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`transition-all duration-1000 ease-out ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+      } ${className}`}
+    >
+      {children}
     </div>
-  </div>
-</section>
+  );
+};
 
-<section class="sec" id="about">
-  <div class="wrap about">
-    <!-- About section portrait photo -->
-    <div class="portrait">
-      <img src="images/picture2.jpg" alt="Portrait of Sloke">
-      <span class="cap">Portrait of Sloke</span>
-    </div>
-    <div>
-      <h2>Hi, I’m Sloke.</h2>
-      <p>I’m a filmmaker and photographer drawn to small, human stories. Most of my work starts with a person, a place and enough time for something real to happen in front of the camera.</p>
-      <p>I shoot short films, documentaries and portrait series, and take commissions from brands, musicians and families. I handle the work from first idea to final grade, so the look stays consistent from the first frame to the last.</p>
-      <ul class="what">
-        <li><b>Film</b><span>Short films and documentaries</span></li>
-        <li><b>Photography</b><span>Portraits, travel and street</span></li>
-        <li><b>Commissions</b><span>Brands, musicians and families</span></li>
-      </ul>
-    </div>
-  </div>
-</section>
+// --- Main App Component ---
 
-<section class="sec" id="portfolio" style="background:var(--bg2)">
-  <div class="wrap">
-    <div class="head">
-      <div>
-        <h2>Portfolio</h2>
-        <p>A selection of recent films and photo series.</p>
-      </div>
-      <div class="chips" role="group" aria-label="Filter work">
-        <button class="chip" data-f="all" aria-pressed="true">All</button>
-        <button class="chip" data-f="film" aria-pressed="false">Film</button>
-        <button class="chip" data-f="photo" aria-pressed="false">Photography</button>
-      </div>
-    </div>
-    <div class="grid">
-      
-      <figure class="card wide" data-c="photo">
-        <img src="images/picture3.jpg" alt="Age roadway">
-        <figcaption><b>Age roadway</b><span>Photo series, 2024</span></figcaption>
-      </figure>
+export default function Portfolio() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-      <figure class="card" data-c="photo">
-        <img src="images/picture4.jpg" alt="Haze">
-        <figcaption><b>Haze</b><span>Photo series, 2026</span></figcaption>
-      </figure>
+  // Handle scroll for navbar
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-      <figure class="card" data-c="film">
-        <a href="https://youtube.com/watch?v=YOUR_VIDEO_ID" target="_blank" class="vid-link">
-          <img src="images/picture5.jpg" alt="The Last Ferry Thumbnail">
-        </a>
-        <figcaption><b>The Last Ferry</b><span>Film, 2025</span></figcaption>
-      </figure>
+  return (
+    <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans selection:bg-[#fcd5ce] selection:text-zinc-900 scroll-smooth">
+      {/* Global CSS for some specific cinematic tweaks */}
+      <style dangerouslySetInnerHTML={{__html: `
+        html { scroll-behavior: smooth; }
+        .text-pastel-blush { color: #fcd5ce; }
+        .text-pastel-peach { color: #ffdab9; }
+        .text-pastel-sage { color: #d8e2dc; }
+        .bg-pastel-blush { background-color: #fcd5ce; }
+        .border-pastel-blush { border-color: #fcd5ce; }
+        .font-cinematic { font-family: 'Playfair Display', Georgia, serif; }
+        
+        /* Subtle animated background mesh */
+        .cinematic-mesh {
+          background-image: 
+            radial-gradient(at 0% 0%, rgba(252, 213, 206, 0.03) 0px, transparent 50%),
+            radial-gradient(at 100% 100%, rgba(216, 226, 220, 0.03) 0px, transparent 50%);
+        }
+      `}} />
 
-      <figure class="card" data-c="photo">
-        <img src="images/picture6.jpg" alt="Faces of the Market">
-        <figcaption><b>Faces of the Market</b><span>Photo series, 2025</span></figcaption>
-      </figure>
+      {/* Navigation */}
+      <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-zinc-950/80 backdrop-blur-md py-4 shadow-lg shadow-black/50' : 'bg-transparent py-6'}`}>
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+          <a href="#home" className="text-2xl font-bold tracking-tighter text-white hover:text-pastel-blush transition-colors z-50">
+            SLOKE.
+          </a>
 
-      <figure class="card" data-c="photo">
-        <img src="images/picture5.jpg" alt="Quiet Hours">
-        <figcaption><b>Quiet Hours</b><span>Photo series, 2025</span></figcaption>
-      </figure>
+          {/* Desktop Nav */}
+          <div className="hidden md:flex gap-8 text-sm font-medium tracking-wide">
+            {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
+              <a key={item} href={`#${item.toLowerCase()}`} className="relative overflow-hidden group py-1 text-zinc-400 hover:text-white transition-colors">
+                {item}
+                <span className="absolute bottom-0 left-0 w-full h-[1px] bg-pastel-blush transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+              </a>
+            ))}
+          </div>
 
-      <figure class="card wide" data-c="film">
-        <a href="https://youtube.com/watch?v=YOUR_VIDEO_ID" target="_blank" class="vid-link">
-          <img src="images/picture6.jpg" alt="Monsoon Letters Thumbnail">
-        </a>
-        <figcaption><b>Monsoon Letters</b><span>Music film, 2024</span></figcaption>
-      </figure>
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden z-50 text-zinc-300 hover:text-white"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
 
-      <figure class="card" data-c="photo">
-        <img src="images/picture7.jpg" alt="Night Bazaar">
-        <figcaption><b>Night Bazaar</b><span>Photo series, 2024</span></figcaption>
-      </figure>
-
-    </div>
-  </div>
-</section>
-</main>
-
-<footer class="foot" id="contact">
-  <div class="wrap">
-    <h2 class="cta">Have a project in mind?</h2>
-    <a class="mail" href="mailto:hello@slokepandey.in">hello@slokepandey.in</a>
-
-    <div class="cols">
-      <div class="brand">
-        <a class="logo" href="#home">
-          <img src="images/logo.png" alt="Sloke Logo" height="50">
-        </a>
-        <p>Films and photographs made with patience and natural light.</p>
-      </div>
-      <nav aria-label="Quick links">
-        <h3>Quick links</h3>
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#portfolio">Portfolio</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
+        {/* Mobile Nav */}
+        <div className={`fixed inset-0 bg-zinc-950 z-40 flex flex-col items-center justify-center gap-8 transition-transform duration-500 ease-in-out md:hidden ${mobileMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+          {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
+            <a 
+              key={item} 
+              href={`#${item.toLowerCase()}`} 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-4xl font-cinematic text-zinc-400 hover:text-pastel-blush transition-colors"
+            >
+              {item}
+            </a>
+          ))}
+        </div>
       </nav>
-      <div>
-        <h3>Elsewhere</h3>
-        <ul>
-          <li><a href="#">Instagram</a></li>
-          <li><a href="#">Vimeo</a></li>
-          <li><a href="#">YouTube</a></li>
-          <li><a href="#">Behance</a></li>
-        </ul>
-      </div>
-      <div>
-        <h3>Future updates</h3>
-        <ul class="soon">
-          <li><b>Showreel 2027</b><span>A new three-minute reel, early next year</span></li>
-          <li><b>Prints and zine</b><span>Limited prints from Quiet Hours</span></li>
-          <li><b>Behind the scenes</b><span>Notes and frames from the shoots</span></li>
-        </ul>
-        <form class="sub-form" id="sub">
-          <label class="sr" for="em">Email address</label>
-          <input id="em" type="email" required placeholder="Your email">
-          <button class="btn pri" type="submit">Notify me</button>
-        </form>
-        <p class="note" id="subMsg" role="status"></p>
-      </div>
-    </div>
 
-    <div class="legal">
-      <span>© 2026 Sloke. All rights reserved.</span>
-      <a href="#home">Back to top</a>
-    </div>
-  </div>
-</footer>
+      <main className="cinematic-mesh">
+        <HeroSection />
+        <AboutSection />
+        <PortfolioSection />
+        <ContactSection />
+      </main>
 
-<script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const burger=$('#burger'),menu=$('#menu');
-function setMenu(o){
-  burger.setAttribute('aria-expanded',o);
-  burger.setAttribute('aria-label',o?'Close menu':'Open menu');
-  menu.classList.toggle('open',o);
-  document.documentElement.classList.toggle('lock',o);
+      <Footer />
+    </div>
+  );
 }
-burger.addEventListener('click',()=>setMenu(burger.getAttribute('aria-expanded')!=='true'));
-addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
-$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
-  e.preventDefault();
-  const id=a.getAttribute('href').slice(1);
-  setMenu(false);
-  if(!id)return;
-  if(id==='home')scrollTo({top:0,behavior:'smooth'});
-  else{const t=document.getElementById(id);if(t)t.scrollIntoView({behavior:'smooth'})}
-}));
-const chips=$$('.chip'),cards=$$('.card');
-chips.forEach(c=>c.addEventListener('click',()=>{
-  chips.forEach(x=>x.setAttribute('aria-pressed',x===c));
-  cards.forEach(k=>{k.hidden=c.dataset.f!=='all'&&k.dataset.c!==c.dataset.f});
-}));
-$('#sub').addEventListener('submit',e=>{
-  e.preventDefault();
-  $('#subMsg').textContent='Thanks, you’re on the list.';
-  e.target.reset();
-});
-</script>
-</body>
-</html>
+
+// --- Sections ---
+
+function HeroSection() {
+  const words = ['Visual Storytelling', 'Wedding Films', 'Event Coverage', 'Cinematic Portraits'];
+  const [currentWord, setCurrentWord] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWord((prev) => (prev + 1) % words.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [words.length]);
+
+  return (
+    <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
+      {/* Background with slight parallax feel */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1485115905815-74a5c9fda0f5?auto=format&fit=crop&q=80&w=2000" 
+          alt="Cinematic background" 
+          className="w-full h-full object-cover opacity-20 filter grayscale contrast-125"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950" />
+      </div>
+
+      <div className="relative z-10 text-center max-w-4xl px-6 w-full mt-20">
+        <FadeIn>
+          <p className="text-pastel-sage font-medium tracking-[0.2em] uppercase text-sm mb-6">
+            Sloke Pandey • Filmmaker & Photographer
+          </p>
+        </FadeIn>
+        
+        <FadeIn delay={200}>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-cinematic font-bold text-white leading-tight mb-8">
+            Crafting <br className="md:hidden" />
+            <span className="relative inline-block w-full h-[1.2em] overflow-hidden align-bottom">
+              {words.map((word, index) => (
+                <span
+                  key={word}
+                  className={`absolute inset-0 w-full text-pastel-blush transition-all duration-700 ease-in-out ${
+                    index === currentWord ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                  }`}
+                >
+                  {word}
+                </span>
+              ))}
+            </span>
+          </h1>
+        </FadeIn>
+
+        <FadeIn delay={400}>
+          <p className="text-zinc-400 max-w-xl mx-auto text-lg md:text-xl mb-12 font-light">
+            Capturing the light between people and places. Award-winning visual narratives designed to make you feel.
+          </p>
+        </FadeIn>
+
+        <FadeIn delay={600} className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <a href="#portfolio" className="group relative px-8 py-4 bg-white text-zinc-950 font-semibold rounded-full overflow-hidden transition-all hover:scale-105">
+            <span className="relative z-10 flex items-center gap-2">
+              Explore Work <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            </span>
+            <div className="absolute inset-0 bg-pastel-blush transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+          </a>
+          <a href="#contact" className="px-8 py-4 text-white font-semibold rounded-full border border-white/20 hover:border-pastel-sage hover:text-pastel-sage transition-all">
+            Start a Project
+          </a>
+        </FadeIn>
+      </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+        <span className="text-xs uppercase tracking-widest">Scroll</span>
+        <div className="w-[1px] h-8 bg-current" />
+      </div>
+    </section>
+  );
+}
+
+function AboutSection() {
+  return (
+    <section id="about" className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <FadeIn className="order-2 lg:order-1 relative">
+          <div className="aspect-[4/5] relative rounded-lg overflow-hidden group">
+            <div className="absolute inset-0 bg-pastel-blush mix-blend-overlay opacity-20 group-hover:opacity-0 transition-opacity duration-700 z-10" />
+            <img 
+              src="https://images.unsplash.com/photo-1554046920-90dc5a3615f5?auto=format&fit=crop&q=80&w=800" 
+              alt="Sloke Pandey" 
+              className="w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-1000 ease-out scale-105 group-hover:scale-100"
+            />
+          </div>
+          {/* Decorative element */}
+          <div className="absolute -bottom-8 -right-8 w-64 h-64 border border-pastel-sage/30 rounded-full -z-10 animate-[spin_20s_linear_infinite]" />
+        </FadeIn>
+
+        <div className="order-1 lg:order-2">
+          <FadeIn>
+            <h2 className="text-4xl md:text-5xl font-cinematic font-bold text-white mb-6">
+              The Vision <span className="text-pastel-peach font-serif italic font-light">&</span> The Voice
+            </h2>
+          </FadeIn>
+          
+          <FadeIn delay={200}>
+            <div className="w-12 h-[2px] bg-pastel-blush mb-8" />
+            <p className="text-zinc-400 text-lg mb-6 leading-relaxed">
+              I believe every story has its own inherent rhythm. My work is dedicated to finding that rhythm through meticulous patience, natural light, and authentic human connection. 
+            </p>
+            <p className="text-zinc-400 text-lg mb-8 leading-relaxed">
+              From intimate wedding films to dynamic commercial campaigns, I approach every frame as a piece of fine art—crafting a cinematic experience that lingers long after the screen goes dark.
+            </p>
+          </FadeIn>
+
+          <FadeIn delay={400} className="grid grid-cols-2 gap-8 border-t border-zinc-800 pt-8">
+            <div>
+              <h3 className="text-white font-semibold uppercase tracking-wider mb-2">Director</h3>
+              <p className="text-zinc-500 text-sm">Visual narratives & Documentary</p>
+            </div>
+            <div>
+              <h3 className="text-white font-semibold uppercase tracking-wider mb-2">Cinematographer</h3>
+              <p className="text-zinc-500 text-sm">Light, Color, & Composition</p>
+            </div>
+          </FadeIn>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PortfolioSection() {
+  const [filter, setFilter] = useState('All');
+  const [filteredItems, setFilteredItems] = useState(PORTFOLIO_ITEMS);
+
+  useEffect(() => {
+    if (filter === 'All') {
+      setFilteredItems(PORTFOLIO_ITEMS);
+    } else {
+      setFilteredItems(PORTFOLIO_ITEMS.filter(item => item.category === filter));
+    }
+  }, [filter]);
+
+  return (
+    <section id="portfolio" className="py-32 bg-zinc-950 relative border-t border-zinc-900">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
+          <FadeIn>
+            <h2 className="text-4xl md:text-5xl font-cinematic font-bold text-white mb-4">Selected Works</h2>
+            <p className="text-zinc-400 max-w-md">An archive of recent cinematic films and photographic series.</p>
+          </FadeIn>
+
+          <FadeIn delay={200} className="flex flex-wrap gap-3">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  filter === cat 
+                    ? 'bg-white text-zinc-950 shadow-[0_0_15px_rgba(252,213,206,0.3)]' 
+                    : 'bg-zinc-900 text-zinc-400 hover:text-pastel-blush hover:bg-zinc-800 border border-zinc-800'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </FadeIn>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[400px]">
+          {filteredItems.map((item, index) => (
+            <FadeIn 
+              key={item.id} 
+              delay={index * 100} 
+              className={`group relative rounded-xl overflow-hidden cursor-pointer ${
+                index === 0 || index === 5 ? 'md:col-span-2 lg:col-span-2' : ''
+              }`}
+            >
+              <img 
+                src={item.image} 
+                alt={item.title} 
+                className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+              
+              <div className="absolute inset-0 p-8 flex flex-col justify-between">
+                <div className="self-end bg-zinc-950/50 backdrop-blur-sm p-3 rounded-full border border-white/10 text-white group-hover:text-pastel-peach transition-colors group-hover:scale-110 duration-300">
+                  {item.type === 'film' ? <Play size={20} className="fill-current" /> : <Camera size={20} />}
+                </div>
+                
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <span className="text-pastel-sage text-xs font-semibold uppercase tracking-wider mb-2 block">
+                    {item.category}
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-cinematic font-bold text-white group-hover:text-pastel-blush transition-colors">
+                    {item.title}
+                  </h3>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+        
+        {filteredItems.length === 0 && (
+          <div className="text-center py-20 text-zinc-500">
+            No projects found in this category.
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ContactSection() {
+  return (
+    <section id="contact" className="py-32 px-6 md:px-12 relative overflow-hidden">
+      <div className="absolute inset-0 bg-zinc-900/30" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-pastel-blush/5 rounded-full blur-3xl -z-10" />
+
+      <div className="max-w-4xl mx-auto relative z-10 text-center">
+        <FadeIn>
+          <Film className="w-12 h-12 text-pastel-blush mx-auto mb-6 opacity-50" />
+          <h2 className="text-5xl md:text-7xl font-cinematic font-bold text-white mb-6">
+            Let's create something <br/><span className="italic text-pastel-sage font-light">timeless.</span>
+          </h2>
+          <p className="text-zinc-400 text-lg mb-12 max-w-xl mx-auto">
+            Available for commissions worldwide. Fill out the form below or reach out directly to discuss your vision.
+          </p>
+        </FadeIn>
+
+        <FadeIn delay={200} className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 p-8 md:p-12 rounded-2xl text-left shadow-2xl">
+          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm text-zinc-400 uppercase tracking-wider font-medium">Name</label>
+                <input 
+                  type="text" 
+                  className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pastel-blush transition-colors"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-zinc-400 uppercase tracking-wider font-medium">Email</label>
+                <input 
+                  type="email" 
+                  className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pastel-blush transition-colors"
+                  placeholder="john@example.com"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-zinc-400 uppercase tracking-wider font-medium">Project Details</label>
+              <textarea 
+                rows="4" 
+                className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pastel-blush transition-colors resize-none"
+                placeholder="Tell me about your vision..."
+              />
+            </div>
+            <button className="w-full py-4 bg-white text-zinc-950 font-bold rounded-lg hover:bg-pastel-blush hover:text-zinc-950 transition-all duration-300">
+              Send Inquiry
+            </button>
+          </form>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="bg-zinc-950 pt-20 pb-10 border-t border-zinc-900">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div className="md:col-span-2">
+            <a href="#home" className="text-3xl font-bold tracking-tighter text-white inline-block mb-4">
+              SLOKE.
+            </a>
+            <p className="text-zinc-500 max-w-sm">
+              Premium visual storytelling, capturing raw emotion through a cinematic lens.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="text-white font-semibold uppercase tracking-wider mb-6">Socials</h4>
+            <div className="flex flex-col gap-4">
+              <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors">
+                <Instagram size={18} /> Instagram
+              </a>
+              <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors">
+                <Youtube size={18} /> Vimeo
+              </a>
+              <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors">
+                <Mail size={18} /> hello@slokepandey.in
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="text-white font-semibold uppercase tracking-wider mb-6">Studio</h4>
+            <address className="not-italic text-zinc-400 space-y-2">
+              <p>Available worldwide</p>
+              <p>Based in New Delhi, India</p>
+            </address>
+          </div>
+        </div>
+
+        <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-600">
+          <p>© {new Date().getFullYear()} Sloke Pandey. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
