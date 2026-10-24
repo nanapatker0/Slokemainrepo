@@ -1,371 +1,493 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sloke | Cinematic Visual Storyteller</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="images/favicon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sloke | Filmmaker & Photographer</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
 
-    <!-- Google Fonts for Premium Look -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Tailwind CSS (CDN for quick setup) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        dark: '#050505',
-                        darker: '#000000',
-                        ivory: '#FFFFF0',
-                        blush: '#F6C8C8',
-                        peach: '#FFDAB9',
-                        sage: '#B2AC88',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
+  <!-- React & ReactDOM (UMD versions for browser) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel (to compile JSX in the browser) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <style>
-        /* Custom Styles & Animations */
-        body {
-            background-color: #050505;
-            color: #d1d5db; /* text-gray-300 */
-        }
-        
-        /* Smooth reveal animation on scroll */
-        .reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Image hover effects */
-        .img-hover-zoom {
-            overflow: hidden;
-        }
-        .img-hover-zoom img {
-            transition: transform 0.7s ease, filter 0.7s ease;
-            filter: grayscale(40%) brightness(0.8);
-        }
-        .img-hover-zoom:hover img {
-            transform: scale(1.05);
-            filter: grayscale(0%) brightness(1);
-        }
-
-        /* Dynamic Gallery Grid */
-        .gallery-item {
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        .gallery-item.hidden {
-            display: none;
-            opacity: 0;
-            transform: scale(0.95);
-        }
-
-        /* Custom subtle grain overlay for cinematic feel */
-        .grain-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-    </style>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 </head>
-<body class="antialiased selection:bg-blush selection:text-darker">
-    
-    <div class="grain-overlay"></div>
+<body class="bg-zinc-950">
+  <div id="root"></div>
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-40 bg-darker/80 backdrop-blur-md border-b border-white/5 transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20">
-                <a href="#home" class="flex-shrink-0">
-                    <img src="images/logo.png" alt="Sloke Logo" class="h-10 w-auto object-contain">
-                </a>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#home" class="text-ivory hover:text-peach px-3 py-2 text-sm font-medium tracking-wide transition-colors">Home</a>
-                        <a href="#about" class="text-gray-300 hover:text-blush px-3 py-2 text-sm font-medium tracking-wide transition-colors">About</a>
-                        <a href="#portfolio" class="text-gray-300 hover:text-peach px-3 py-2 text-sm font-medium tracking-wide transition-colors">Portfolio</a>
-                        <a href="#contact" class="text-gray-300 hover:text-blush px-3 py-2 text-sm font-medium tracking-wide transition-colors">Contact</a>
+  <!-- React App Code -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- SVG Icon Components (Replacing lucide-react imports for browser compatibility) ---
+    const Icon = ({ children, size = 24, className = "" }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
+    );
+    const Menu = (p) => <Icon {...p}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></Icon>;
+    const X = (p) => <Icon {...p}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon>;
+    const Play = (p) => <Icon {...p}><polygon points="5 3 19 12 5 21 5 3"/></Icon>;
+    const Camera = (p) => <Icon {...p}><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></Icon>;
+    const Mail = (p) => <Icon {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></Icon>;
+    const ArrowRight = (p) => <Icon {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></Icon>;
+    const Instagram = (p) => <Icon {...p}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></Icon>;
+    const Youtube = (p) => <Icon {...p}><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></Icon>;
+    const Film = (p) => <Icon {...p}><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="7" y1="7" y2="7"/><line x1="2" x2="7" y1="17" y2="17"/><line x1="17" x2="22" y1="17" y2="17"/><line x1="17" x2="22" y1="7" y2="7"/></Icon>;
+
+    // --- Custom Hooks ---
+    const useIntersectionObserver = (options = { threshold: 0.1, triggerOnce: true }) => {
+      const [isIntersecting, setIsIntersecting] = useState(false);
+      const ref = useRef(null);
+
+      useEffect(() => {
+        const element = ref.current;
+        if (!element) return;
+
+        const observer = new IntersectionObserver(([entry]) => {
+          if (entry.isIntersecting) {
+            setIsIntersecting(true);
+            if (options.triggerOnce) observer.disconnect();
+          } else {
+            if (!options.triggerOnce) setIsIntersecting(false);
+          }
+        }, options);
+
+        observer.observe(element);
+        return () => observer.disconnect();
+      }, [options]);
+
+      return [ref, isIntersecting];
+    };
+
+    // --- Data ---
+    const PORTFOLIO_ITEMS = [
+      { id: 1, title: 'The Vows', category: 'Wedding Films', type: 'film', image: 'images/picture3.jpg' },
+      { id: 2, title: 'Neon Symphony', category: 'Event Coverage', type: 'photo', image: 'images/picture4.jpg' },
+      { id: 3, title: 'Quiet Hours', category: 'Portraits', type: 'photo', image: 'images/picture5.jpg' },
+      { id: 4, title: 'Salt Season', category: 'Wedding Films', type: 'film', image: 'images/picture6.jpg' },
+      { id: 5, title: 'Faces of the Market', category: 'Portraits', type: 'photo', image: 'images/picture7.jpg' },
+      { id: 6, title: 'Rhythm & Light', category: 'Event Coverage', type: 'film', image: 'images/picture8.jpg' },
+    ];
+
+    const CATEGORIES = ['All', 'Wedding Films', 'Event Coverage', 'Portraits'];
+
+    // --- Components ---
+    const FadeIn = ({ children, className = '', delay = 0 }) => {
+      const [ref, isVisible] = useIntersectionObserver();
+      return (
+        <div
+          ref={ref}
+          style={{ transitionDelay: `${delay}ms` }}
+          className={`transition-all duration-1000 ease-out ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          } ${className}`}
+        >
+          {children}
+        </div>
+      );
+    };
+
+    function HeroSection() {
+      const words = ['Visual Storytelling', 'Wedding Films', 'Event Coverage', 'Cinematic Portraits'];
+      const [currentWord, setCurrentWord] = useState(0);
+
+      useEffect(() => {
+        const interval = setInterval(() => {
+          setCurrentWord((prev) => (prev + 1) % words.length);
+        }, 3000);
+        return () => clearInterval(interval);
+      }, [words.length]);
+
+      return (
+        <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="images/picture1.jpg" 
+              alt="Cinematic background" 
+              className="w-full h-full object-cover opacity-30 filter grayscale contrast-125"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950" />
+          </div>
+
+          <div className="relative z-10 text-center max-w-4xl px-6 w-full mt-20">
+            <FadeIn>
+              <p className="text-pastel-sage font-medium tracking-[0.2em] uppercase text-sm mb-6">
+                Sloke Pandey • Filmmaker & Photographer
+              </p>
+            </FadeIn>
+            
+            <FadeIn delay={200}>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-cinematic font-bold text-white leading-tight mb-8">
+                Crafting <br className="md:hidden" />
+                <span className="relative inline-block w-full h-[1.2em] overflow-hidden align-bottom">
+                  {words.map((word, index) => (
+                    <span
+                      key={word}
+                      className={`absolute inset-0 w-full text-pastel-blush transition-all duration-700 ease-in-out ${
+                        index === currentWord ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+                      }`}
+                    >
+                      {word}
+                    </span>
+                  ))}
+                </span>
+              </h1>
+            </FadeIn>
+
+            <FadeIn delay={400}>
+              <p className="text-zinc-400 max-w-xl mx-auto text-lg md:text-xl mb-12 font-light">
+                Capturing the light between people and places. Award-winning visual narratives designed to make you feel.
+              </p>
+            </FadeIn>
+
+            <FadeIn delay={600} className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <a href="#portfolio" className="group relative px-8 py-4 bg-white text-zinc-950 font-semibold rounded-full overflow-hidden transition-all hover:scale-105">
+                <span className="relative z-10 flex items-center gap-2">
+                  Explore Work <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-pastel-blush transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out" />
+              </a>
+              <a href="#contact" className="px-8 py-4 text-white font-semibold rounded-full border border-white/20 hover:border-pastel-sage hover:text-pastel-sage transition-all">
+                Start a Project
+              </a>
+            </FadeIn>
+          </div>
+
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50 animate-bounce">
+            <span className="text-xs uppercase tracking-widest text-white">Scroll</span>
+            <div className="w-[1px] h-8 bg-white" />
+          </div>
+        </section>
+      );
+    }
+
+    function AboutSection() {
+      return (
+        <section id="about" className="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <FadeIn className="order-2 lg:order-1 relative">
+              <div className="aspect-[4/5] relative rounded-lg overflow-hidden group">
+                <div className="absolute inset-0 bg-pastel-blush mix-blend-overlay opacity-20 group-hover:opacity-0 transition-opacity duration-700 z-10" />
+                <img 
+                  src="images/picture2.jpg" 
+                  alt="Sloke Pandey" 
+                  className="w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-1000 ease-out scale-105 group-hover:scale-100"
+                />
+              </div>
+              <div className="absolute -bottom-8 -right-8 w-64 h-64 border border-pastel-sage/30 rounded-full -z-10 animate-[spin_20s_linear_infinite]" />
+            </FadeIn>
+
+            <div className="order-1 lg:order-2">
+              <FadeIn>
+                <h2 className="text-4xl md:text-5xl font-cinematic font-bold text-white mb-6">
+                  The Vision <span className="text-pastel-peach font-serif italic font-light">&</span> The Voice
+                </h2>
+              </FadeIn>
+              
+              <FadeIn delay={200}>
+                <div className="w-12 h-[2px] bg-pastel-blush mb-8" />
+                <p className="text-zinc-400 text-lg mb-6 leading-relaxed">
+                  I believe every story has its own inherent rhythm. My work is dedicated to finding that rhythm through meticulous patience, natural light, and authentic human connection. 
+                </p>
+                <p className="text-zinc-400 text-lg mb-8 leading-relaxed">
+                  From intimate wedding films to dynamic commercial campaigns, I approach every frame as a piece of fine art—crafting a cinematic experience that lingers long after the screen goes dark.
+                </p>
+              </FadeIn>
+
+              <FadeIn delay={400} className="grid grid-cols-2 gap-8 border-t border-zinc-800 pt-8">
+                <div>
+                  <h3 className="text-white font-semibold uppercase tracking-wider mb-2">Director</h3>
+                  <p className="text-zinc-500 text-sm">Visual narratives & Documentary</p>
+                </div>
+                <div>
+                  <h3 className="text-white font-semibold uppercase tracking-wider mb-2">Cinematographer</h3>
+                  <p className="text-zinc-500 text-sm">Light, Color, & Composition</p>
+                </div>
+              </FadeIn>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function PortfolioSection() {
+      const [filter, setFilter] = useState('All');
+      const [filteredItems, setFilteredItems] = useState(PORTFOLIO_ITEMS);
+
+      useEffect(() => {
+        if (filter === 'All') {
+          setFilteredItems(PORTFOLIO_ITEMS);
+        } else {
+          setFilteredItems(PORTFOLIO_ITEMS.filter(item => item.category === filter));
+        }
+      }, [filter]);
+
+      return (
+        <section id="portfolio" className="py-32 bg-zinc-950 relative border-t border-zinc-900">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
+              <FadeIn>
+                <h2 className="text-4xl md:text-5xl font-cinematic font-bold text-white mb-4">Selected Works</h2>
+                <p className="text-zinc-400 max-w-md">An archive of recent cinematic films and photographic series.</p>
+              </FadeIn>
+
+              <FadeIn delay={200} className="flex flex-wrap gap-3">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setFilter(cat)}
+                    className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                      filter === cat 
+                        ? 'bg-white text-zinc-950 shadow-[0_0_15px_rgba(252,213,206,0.3)]' 
+                        : 'bg-zinc-900 text-zinc-400 hover:text-pastel-blush hover:bg-zinc-800 border border-zinc-800'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </FadeIn>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[400px]">
+              {filteredItems.map((item, index) => (
+                <FadeIn 
+                  key={item.id} 
+                  delay={index * 100} 
+                  className={`group relative rounded-xl overflow-hidden cursor-pointer ${
+                    index === 0 || index === 5 ? 'md:col-span-2 lg:col-span-2' : ''
+                  }`}
+                >
+                  <img 
+                    src={item.image} 
+                    alt={item.title} 
+                    className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+                  
+                  <div className="absolute inset-0 p-8 flex flex-col justify-between">
+                    <div className="self-end bg-zinc-950/50 backdrop-blur-sm p-3 rounded-full border border-white/10 text-white group-hover:text-pastel-peach transition-colors group-hover:scale-110 duration-300">
+                      {item.type === 'film' ? <Play size={20} /> : <Camera size={20} />}
                     </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 z-0">
-            <img src="images/picture1.jpg" alt="Cinematic Cover" class="w-full h-full object-cover opacity-60">
-            <!-- Subtle peach/dark gradient overlay -->
-            <div class="absolute inset-0 bg-gradient-to-b from-darker/80 via-darker/50 to-darker"></div>
-        </div>
-        
-        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto reveal mt-16">
-            <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif text-ivory mb-6 tracking-tight">
-                Visual <span class="italic text-peach">Storytelling</span>
-            </h1>
-            <p class="text-lg md:text-xl text-gray-300 font-light max-w-2xl mx-auto mb-10 leading-relaxed">
-                Quiet, patient wedding films and event photography. Capturing the raw, unscripted light between people.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="#portfolio" class="px-8 py-4 border border-blush text-blush hover:bg-blush hover:text-darker transition-all duration-300 rounded-full font-medium tracking-wide">
-                    Explore the Gallery
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="py-24 bg-dark">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <div class="reveal img-hover-zoom rounded-sm overflow-hidden border border-white/5 relative">
-                    <!-- Soft overlay on portrait -->
-                    <div class="absolute inset-0 bg-blush/10 mix-blend-overlay z-10"></div>
-                    <img src="images/picture2.jpg" alt="Sloke Portrait" class="w-full h-full object-cover aspect-[4/5]">
-                </div>
-                <div class="reveal">
-                    <h2 class="text-3xl md:text-4xl font-serif text-ivory mb-6">Based in <span class="italic text-blush">Kolkata</span>.</h2>
-                    <p class="text-gray-400 mb-6 leading-relaxed text-lg font-light">
-                        I am a filmmaker and photographer drawn to small, human stories. Specializing in wedding films and extensive event coverage, my approach is rooted in letting moments unfold naturally. 
-                    </p>
-                    <p class="text-gray-400 mb-8 leading-relaxed text-lg font-light">
-                        From the initial visual concept to the final color grade, I ensure every frame maintains a cohesive aesthetic—often leaning towards soft, elegant palettes that bring a timeless quality to modern memories.
-                    </p>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-8 border-t border-white/10">
-                        <div>
-                            <h3 class="text-peach font-medium mb-2 uppercase tracking-widest text-sm">Wedding Films</h3>
-                            <p class="text-sm text-gray-500">Cinematic documentaries of your day.</p>
-                        </div>
-                        <div>
-                            <h3 class="text-blush font-medium mb-2 uppercase tracking-widest text-sm">Event Coverage</h3>
-                            <p class="text-sm text-gray-500">Comprehensive, aesthetic photo narratives.</p>
-                        </div>
+                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      <span className="text-pastel-sage text-xs font-semibold uppercase tracking-wider mb-2 block">
+                        {item.category}
+                      </span>
+                      <h3 className="text-2xl md:text-3xl font-cinematic font-bold text-white group-hover:text-pastel-blush transition-colors">
+                        {item.title}
+                      </h3>
                     </div>
-                </div>
+                  </div>
+                </FadeIn>
+              ))}
             </div>
-        </div>
-    </section>
+            
+            {filteredItems.length === 0 && (
+              <div className="text-center py-20 text-zinc-500">
+                No projects found in this category.
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
 
-    <!-- Dynamic Portfolio Section -->
-    <section id="portfolio" class="py-24 bg-darker">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
-                <div>
-                    <h2 class="text-4xl font-serif text-ivory mb-4">Selected Works</h2>
-                    <p class="text-gray-400">A curation of recent films and photo series.</p>
+    function ContactSection() {
+      return (
+        <section id="contact" className="py-32 px-6 md:px-12 relative overflow-hidden">
+          <div className="absolute inset-0 bg-zinc-900/30" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-pastel-blush/5 rounded-full blur-3xl -z-10" />
+
+          <div className="max-w-4xl mx-auto relative z-10 text-center">
+            <FadeIn>
+              <Film className="w-12 h-12 text-pastel-blush mx-auto mb-6 opacity-50" />
+              <h2 className="text-5xl md:text-7xl font-cinematic font-bold text-white mb-6">
+                Let's create something <br/><span className="italic text-pastel-sage font-light">timeless.</span>
+              </h2>
+              <p className="text-zinc-400 text-lg mb-12 max-w-xl mx-auto">
+                Available for commissions worldwide. Fill out the form below or reach out directly to discuss your vision.
+              </p>
+            </FadeIn>
+
+            <FadeIn delay={200} className="bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 p-8 md:p-12 rounded-2xl text-left shadow-2xl">
+              <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm text-zinc-400 uppercase tracking-wider font-medium">Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pastel-blush transition-colors"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-zinc-400 uppercase tracking-wider font-medium">Email</label>
+                    <input 
+                      type="email" 
+                      className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pastel-blush transition-colors"
+                      placeholder="john@example.com"
+                    />
+                  </div>
                 </div>
-                
-                <!-- Dynamic Filters -->
-                <div class="flex flex-wrap gap-3 mt-6 md:mt-0" id="filter-btns">
-                    <button class="filter-btn active px-5 py-2 rounded-full border border-white/20 text-sm tracking-wide text-ivory bg-white/10 transition-all" data-filter="all">All</button>
-                    <button class="filter-btn px-5 py-2 rounded-full border border-white/20 text-sm tracking-wide text-gray-400 hover:text-ivory hover:border-ivory transition-all" data-filter="weddings">Weddings</button>
-                    <button class="filter-btn px-5 py-2 rounded-full border border-white/20 text-sm tracking-wide text-gray-400 hover:text-ivory hover:border-ivory transition-all" data-filter="events">Events</button>
+                <div className="space-y-2">
+                  <label className="text-sm text-zinc-400 uppercase tracking-wider font-medium">Project Details</label>
+                  <textarea 
+                    rows="4" 
+                    className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pastel-blush transition-colors resize-none"
+                    placeholder="Tell me about your vision..."
+                  />
                 </div>
-            </div>
+                <button className="w-full py-4 bg-white text-zinc-950 font-bold rounded-lg hover:bg-pastel-blush hover:text-zinc-950 transition-all duration-300">
+                  Send Inquiry
+                </button>
+              </form>
+            </FadeIn>
+          </div>
+        </section>
+      );
+    }
 
-            <!-- Masonry-style Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="gallery">
-                
-                <!-- Item 1 (Event) -->
-                <div class="gallery-item events reveal img-hover-zoom relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] group rounded-sm border border-white/5">
-                    <img src="images/picture3.jpg" alt="Event Coverage" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-darker via-transparent to-transparent opacity-80"></div>
-                    <div class="absolute bottom-0 left-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                        <span class="text-xs font-semibold text-peach uppercase tracking-widest block mb-2">Event</span>
-                        <h3 class="text-xl font-serif text-ivory">Age Roadway</h3>
-                    </div>
-                </div>
-
-                <!-- Item 2 (Wedding Video) -->
-                <div class="gallery-item weddings reveal img-hover-zoom relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] group rounded-sm border border-white/5 lg:col-span-2 lg:aspect-auto">
-                    <a href="https://youtube.com/watch?v=YOUR_VIDEO_ID" target="_blank" class="block w-full h-full">
-                        <img src="images/picture5.jpg" alt="Wedding Film" class="w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-darker/20 group-hover:bg-transparent transition-all"></div>
-                        
-                        <!-- Play Button UI -->
-                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full border-2 border-ivory flex items-center justify-center bg-darker/50 backdrop-blur-sm group-hover:scale-110 transition-transform">
-                            <div class="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-ivory border-b-[8px] border-b-transparent ml-1"></div>
-                        </div>
-
-                        <div class="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-darker w-full">
-                            <span class="text-xs font-semibold text-blush uppercase tracking-widest block mb-2">Wedding Film</span>
-                            <h3 class="text-xl font-serif text-ivory">The Last Ferry</h3>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- Item 3 (Portrait/Event) -->
-                <div class="gallery-item events reveal img-hover-zoom relative aspect-[4/5] group rounded-sm border border-white/5">
-                    <img src="images/picture6.jpg" alt="Faces of the Market" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-darker opacity-80"></div>
-                    <div class="absolute bottom-0 left-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform">
-                        <span class="text-xs font-semibold text-sage uppercase tracking-widest block mb-2">Photo Series</span>
-                        <h3 class="text-xl font-serif text-ivory">Faces of the Market</h3>
-                    </div>
-                </div>
-
-                <!-- Item 4 (Wedding) -->
-                <div class="gallery-item weddings reveal img-hover-zoom relative aspect-[4/5] group rounded-sm border border-white/5">
-                    <img src="images/picture4.jpg" alt="Haze" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-darker opacity-80"></div>
-                    <div class="absolute bottom-0 left-0 p-6 translate-y-4 group-hover:translate-y-0 transition-transform">
-                        <span class="text-xs font-semibold text-peach uppercase tracking-widest block mb-2">Wedding</span>
-                        <h3 class="text-xl font-serif text-ivory">Haze</h3>
-                    </div>
-                </div>
-
-                <!-- Item 5 (Event Video) -->
-                <div class="gallery-item events reveal img-hover-zoom relative aspect-[4/5] group rounded-sm border border-white/5">
-                    <a href="https://youtube.com/watch?v=YOUR_VIDEO_ID" target="_blank" class="block w-full h-full">
-                        <img src="images/picture8.jpg" alt="Monsoon Letters" class="w-full h-full object-cover">
-                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full border-2 border-ivory flex items-center justify-center bg-darker/50 group-hover:scale-110 transition-transform">
-                            <div class="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-ivory border-b-[8px] border-b-transparent ml-1"></div>
-                        </div>
-                        <div class="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-darker w-full">
-                            <span class="text-xs font-semibold text-sage uppercase tracking-widest block mb-2">Event Film</span>
-                            <h3 class="text-xl font-serif text-ivory">Monsoon Letters</h3>
-                        </div>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer / Contact -->
-    <footer id="contact" class="bg-dark pt-24 pb-12 border-t border-white/5">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
-            <div class="text-center max-w-2xl mx-auto mb-20 reveal">
-                <h2 class="text-4xl font-serif text-ivory mb-6">Have a project in mind?</h2>
-                <a href="mailto:hello@slokepandey.in" class="inline-block text-2xl md:text-3xl font-light text-blush hover:text-ivory transition-colors border-b border-blush hover:border-ivory pb-1">
-                    hello@slokepandey.in
+    function Footer() {
+      return (
+        <footer className="bg-zinc-950 pt-20 pb-10 border-t border-zinc-900">
+          <div className="max-w-7xl mx-auto px-6 md:px-12">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+              <div className="md:col-span-2">
+                <a href="#home" className="flex items-center gap-3 mb-4">
+                  <img src="images/logo.png" alt="Sloke Logo" className="h-8" />
+                  <span className="text-3xl font-bold tracking-tighter text-white">SLOKE.</span>
                 </a>
+                <p className="text-zinc-500 max-w-sm">
+                  Premium visual storytelling, capturing raw emotion through a cinematic lens.
+                </p>
+              </div>
+              
+              <div>
+                <h4 className="text-white font-semibold uppercase tracking-wider mb-6">Socials</h4>
+                <div className="flex flex-col gap-4">
+                  <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors">
+                    <Instagram size={18} /> Instagram
+                  </a>
+                  <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors">
+                    <Youtube size={18} /> Vimeo
+                  </a>
+                  <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors">
+                    <Mail size={18} /> hello@slokepandey.in
+                  </a>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-white font-semibold uppercase tracking-wider mb-6">Studio</h4>
+                <address className="not-italic text-zinc-400 space-y-2">
+                  <p>Available worldwide</p>
+                  <p>Based in Kolkata, West Bengal</p>
+                </address>
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 pt-12 border-t border-white/10 reveal">
-                <div class="md:col-span-1">
-                    <img src="images/logo.png" alt="Sloke Logo" class="h-10 w-auto object-contain mb-6 opacity-80">
-                    <p class="text-sm text-gray-500 leading-relaxed">
-                        Films and photographs made with patience, raw emotion, and natural light.
-                    </p>
-                </div>
-                
-                <div>
-                    <h4 class="text-ivory font-medium mb-4 tracking-wide">Explore</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#home" class="hover:text-blush transition-colors">Home</a></li>
-                        <li><a href="#about" class="hover:text-blush transition-colors">About</a></li>
-                        <li><a href="#portfolio" class="hover:text-blush transition-colors">Portfolio</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-ivory font-medium mb-4 tracking-wide">Connect</h4>
-                    <ul class="space-y-2 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-peach transition-colors">Instagram</a></li>
-                        <li><a href="#" class="hover:text-peach transition-colors">YouTube</a></li>
-                        <li><a href="#" class="hover:text-peach transition-colors">Vimeo</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-ivory font-medium mb-4 tracking-wide">Stay Updated</h4>
-                    <form class="flex gap-2">
-                        <input type="email" placeholder="Your email" required class="bg-darker border border-white/20 px-4 py-2 text-sm rounded-sm focus:outline-none focus:border-blush text-ivory w-full transition-colors">
-                        <button type="submit" class="bg-white/10 hover:bg-blush hover:text-darker text-ivory px-4 py-2 rounded-sm text-sm transition-colors border border-white/20 hover:border-blush">Join</button>
-                    </form>
-                </div>
+            <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-600">
+              <p>© {new Date().getFullYear()} Sloke Pandey. All rights reserved.</p>
+              <div className="flex gap-6">
+                <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+              </div>
             </div>
+          </div>
+        </footer>
+      );
+    }
 
-            <div class="mt-16 text-center text-sm text-gray-600">
-                &copy; 2026 Sloke Pandey. All rights reserved.
-            </div>
-        </div>
-    </footer>
+    function Portfolio() {
+      const [isScrolled, setIsScrolled] = useState(false);
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    <!-- Interactive Scripts -->
-    <script>
-        // 1. Smooth Reveal Animations on Scroll
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
-        
-        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                entry.target.classList.add('active');
-                observer.unobserve(entry.target); // Only animate once
-            });
-        }, revealOptions);
+      useEffect(() => {
+        const handleScroll = () => {
+          setIsScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
 
-        revealElements.forEach(el => revealOnScroll.observe(el));
-
-        // 2. Dynamic Portfolio Filter Logic
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const galleryItems = document.querySelectorAll('.gallery-item');
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Update active button styling
-                filterBtns.forEach(b => {
-                    b.classList.remove('bg-white/10', 'text-ivory');
-                    b.classList.add('text-gray-400');
-                });
-                btn.classList.add('bg-white/10', 'text-ivory');
-                btn.classList.remove('text-gray-400');
-
-                // Filter items
-                const filterValue = btn.getAttribute('data-filter');
-                
-                galleryItems.forEach(item => {
-                    if (filterValue === 'all' || item.classList.contains(filterValue)) {
-                        item.classList.remove('hidden');
-                        setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'scale(1)'; }, 50);
-                    } else {
-                        item.style.opacity = '0';
-                        item.style.transform = 'scale(0.95)';
-                        setTimeout(() => { item.classList.add('hidden'); }, 400); // Wait for transition
-                    }
-                });
-                
-                // Re-trigger scroll animations for newly shown items
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('scroll'));
-                }, 450);
-            });
-        });
-
-        // 3. Navbar Background blur on scroll
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('bg-darker/95', 'shadow-lg');
-                navbar.classList.remove('bg-darker/80');
-            } else {
-                navbar.classList.add('bg-darker/80');
-                navbar.classList.remove('bg-darker/95', 'shadow-lg');
+      return (
+        <div className="min-h-screen bg-zinc-950 text-zinc-200 font-sans selection:bg-[#fcd5ce] selection:text-zinc-900 scroll-smooth">
+          <style dangerouslySetInnerHTML={{__html: `
+            html { scroll-behavior: smooth; }
+            .text-pastel-blush { color: #fcd5ce; }
+            .text-pastel-peach { color: #ffdab9; }
+            .text-pastel-sage { color: #d8e2dc; }
+            .bg-pastel-blush { background-color: #fcd5ce; }
+            .border-pastel-blush { border-color: #fcd5ce; }
+            .font-cinematic { font-family: 'Playfair Display', Georgia, serif; }
+            
+            .cinematic-mesh {
+              background-image: 
+                radial-gradient(at 0% 0%, rgba(252, 213, 206, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(216, 226, 220, 0.03) 0px, transparent 50%);
             }
-        });
-    </script>
+          `}} />
+
+          <nav className={`fixed w-full z-50 transition-all duration-500 ${isScrolled ? 'bg-zinc-950/80 backdrop-blur-md py-4 shadow-lg shadow-black/50' : 'bg-transparent py-6'}`}>
+            <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
+              <a href="#home" className="flex items-center gap-2 text-2xl font-bold tracking-tighter text-white hover:text-pastel-blush transition-colors z-50">
+                <img src="images/logo.png" alt="Logo" className="h-8" /> SLOKE.
+              </a>
+
+              <div className="hidden md:flex gap-8 text-sm font-medium tracking-wide">
+                {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
+                  <a key={item} href={`#${item.toLowerCase()}`} className="relative overflow-hidden group py-1 text-zinc-400 hover:text-white transition-colors">
+                    {item}
+                    <span className="absolute bottom-0 left-0 w-full h-[1px] bg-pastel-blush transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                  </a>
+                ))}
+              </div>
+
+              <button 
+                className="md:hidden z-50 text-zinc-300 hover:text-white"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              </button>
+            </div>
+
+            <div className={`fixed inset-0 bg-zinc-950 z-40 flex flex-col items-center justify-center gap-8 transition-transform duration-500 ease-in-out md:hidden ${mobileMenuOpen ? 'translate-y-0' : '-translate-y-full'}`}>
+              {['Home', 'About', 'Portfolio', 'Contact'].map((item) => (
+                <a 
+                  key={item} 
+                  href={`#${item.toLowerCase()}`} 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-4xl font-cinematic text-zinc-400 hover:text-pastel-blush transition-colors"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          </nav>
+
+          <main className="cinematic-mesh">
+            <HeroSection />
+            <AboutSection />
+            <PortfolioSection />
+            <ContactSection />
+          </main>
+
+          <Footer />
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Portfolio />);
+  </script>
 </body>
 </html>
