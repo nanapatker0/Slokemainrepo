@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080b0f" />
+  <meta name="description" content="Harvisha Pictures — Capturing Moments • Creating Memories. Our new website is coming soon." />
+  <title>Coming Soon | Harvisha Pictures</title>
+  <style>
+    :root {
+      --bg: #080b0f;
+      --panel: rgba(255,255,255,.045);
+      --white: #f7f8fa;
+      --muted: #a6afb9;
+      --cyan: #56d9e8;
+      --line: rgba(255,255,255,.14);
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--white);
+      background:
+        radial-gradient(ellipse at 16% 15%, rgba(39,166,189,.14), transparent 38%),
+        radial-gradient(ellipse at 90% 85%, rgba(69,94,126,.16), transparent 36%),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 18px;
+      border: 1px solid rgba(255,255,255,.075);
+      pointer-events: none;
+    }
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .10;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
+    }
+    .page {
+      width: min(1120px, 100%);
+      min-height: 100vh;
+      padding: 42px 8%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
+    }
+    header, footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 13px; text-decoration: none; color: inherit; }
+    .monogram {
+      width: 44px; height: 44px; display: grid; place-items: center;
+      border: 1px solid var(--cyan); color: var(--cyan);
+      font-family: Georgia, "Times New Roman", serif; font-size: 17px; letter-spacing: -2px;
+      transform: rotate(-3deg);
+    }
+    .brand-name { font-size: 12px; font-weight: 750; letter-spacing: .2em; text-transform: uppercase; }
+    .brand-sub { margin-top: 4px; font-size: 9px; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
+    .status { color: var(--muted); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 14px var(--cyan); }
+    main { padding: 76px 0 84px; max-width: 780px; }
+    .eyebrow { display: flex; align-items: center; gap: 13px; color: var(--cyan); font-size: 10px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--cyan); }
+    h1 {
+      margin: 28px 0 22px; font-size: clamp(54px, 9vw, 112px);
+      line-height: .92; letter-spacing: -.075em; font-weight: 620;
+    }
+    h1 span { color: var(--cyan); font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-style: italic; letter-spacing: -.08em; }
+    .intro { max-width: 510px; color: var(--muted); font-size: clamp(14px, 1.6vw, 17px); line-height: 1.85; }
+    .rule { width: 100%; height: 1px; background: linear-gradient(90deg, var(--cyan), var(--line) 48%, transparent); margin: 38px 0 25px; }
+    .bottom-line { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 28px; }
+    .tagline { color: #e9edf1; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+    .tagline b { color: var(--cyan); font-weight: 500; }
+    .contact {
+      display: inline-flex; align-items: center; gap: 11px; padding: 13px 17px;
+      color: var(--white); border: 1px solid var(--line); background: var(--panel);
+      text-decoration: none; font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .contact:hover { border-color: var(--cyan); background: rgba(86,217,232,.08); transform: translateY(-2px); }
+    .arrow { color: var(--cyan); font-size: 17px; line-height: 10px; }
+    footer { border-top: 1px solid var(--line); padding-top: 20px; color: #78828d; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; }
+    .footer-right { color: var(--muted); }
+    @media (max-width: 600px) {
+      body::before { inset: 9px; }
+      .page { padding: 30px 8%; }
+      header { align-items: flex-start; }
+      .status { font-size: 8px; letter-spacing: .1em; margin-top: 7px; }
+      .monogram { width: 39px; height: 39px; }
+      .brand-name { font-size: 10px; }
+      .brand-sub { font-size: 8px; }
+      main { padding: 85px 0 90px; }
+      h1 { font-size: clamp(53px, 15vw, 80px); }
+      .intro { font-size: 14px; }
+      footer { align-items: flex-start; flex-direction: column; gap: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="page">
+    <header>
+      <a class="brand" href="#" aria-label="Harvisha Pictures home">
+        <div class="monogram" aria-hidden="true">HP</div>
+        <div>
+          <div class="brand-name">Harvisha Pictures</div>
+          <div class="brand-sub">Film &amp; Photography</div>
+        </div>
+      </a>
+      <div class="status"><span class="dot"></span> New experience in progress</div>
+    </header>
+
+    <main>
+      <div class="eyebrow">The next chapter</div>
+      <h1>Something<br />beautiful is<br /><span>in frame.</span></h1>
+      <p class="intro">
+        We’re crafting a new online home for the stories we capture.
+        Wedding films, meaningful moments, and memories made to last —
+        all in one place. Our website is coming soon.
+      </p>
+      <div class="rule"></div>
+      <div class="bottom-line">
+        <div class="tagline">Capturing Moments <b>•</b> Creating Memories</div>
+        <a class="contact" href="https://www.instagram.com/harvishapictures/" target="_blank" rel="noopener noreferrer">
+          Follow our journey <span class="arrow">↗</span>
+        </a>
+      </div>
+    </main>
+
+    <footer>
+      <div>© <span id="year"></span> Harvisha Pictures</div>
+      <div class="footer-right">Made for stories worth remembering · Kolkata, India</div>
+    </footer>
+  </div>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
