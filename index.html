@@ -38,7 +38,7 @@
     const Mail = (p) => <Icon {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></Icon>;
     const ArrowRight = (p) => <Icon {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></Icon>;
     const Instagram = (p) => <Icon {...p}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></Icon>;
-    const Youtube = (p) => <Icon {...p}><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></Icon>;
+    const Globe = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></Icon>;
     const Film = (p) => <Icon {...p}><rect width="20" height="20" x="2" y="2" rx="2.18" ry="2.18"/><line x1="7" x2="7" y1="2" y2="22"/><line x1="17" x2="17" y1="2" y2="22"/><line x1="2" x2="22" y1="12" y2="12"/><line x1="2" x2="7" y1="7" y2="7"/><line x1="2" x2="7" y1="17" y2="17"/><line x1="17" x2="22" y1="17" y2="17"/><line x1="17" x2="22" y1="7" y2="7"/></Icon>;
 
     // --- Helper function to extract YouTube Thumbnail from link ---
@@ -118,7 +118,7 @@
             <img 
               src="images/picture1.jpg" 
               alt="Cinematic background" 
-              className="w-full h-full object-cover opacity-30 filter grayscale contrast-125"
+              className="w-full h-full object-cover opacity-40"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-transparent to-zinc-950" />
@@ -188,7 +188,7 @@
                 <img 
                   src="images/picture2.jpg" 
                   alt="Sloke Pandey" 
-                  className="w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 transition-all duration-1000 ease-out scale-105 group-hover:scale-100"
+                  className="w-full h-full object-cover transition-all duration-1000 ease-out scale-105 group-hover:scale-100"
                 />
               </div>
               <div className="absolute -bottom-8 -right-4 md:-right-8 w-48 h-48 md:w-64 md:h-64 border border-pastel-sage/30 rounded-full -z-10 animate-[spin_20s_linear_infinite]" />
@@ -217,7 +217,7 @@
                   <p className="text-zinc-500 text-xs md:text-sm">Visual narratives & Short Films</p>
                 </div>
                 <div>
-                  <h3 className="text-white font-semibold uppercase tracking-wider text-sm md:text-base mb-1 md:mb-2">Cinematographer</h3>
+                  <h3 className="text-white font-semibold uppercase tracking-wider text-sm md:text-base mb-1 md:mb-2">Photographer</h3>
                   <p className="text-zinc-500 text-xs md:text-sm">Light, Color, & Composition</p>
                 </div>
               </FadeIn>
@@ -230,7 +230,6 @@
     function PortfolioSection() {
       const [filter, setFilter] = useState('All');
       const [filteredItems, setFilteredItems] = useState(PORTFOLIO_ITEMS);
-      // Lightbox state add kiya gaya
       const [selectedImage, setSelectedImage] = useState(null);
 
       useEffect(() => {
@@ -241,7 +240,6 @@
         }
       }, [filter]);
 
-      // Scroll disable karein jab lightbox open ho
       useEffect(() => {
         if (selectedImage) {
           document.body.style.overflow = 'hidden';
@@ -288,14 +286,14 @@
                     <img 
                       src={displayImage} 
                       alt={item.title} 
-                      className="absolute inset-0 w-full h-full object-cover filter grayscale contrast-125 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                      className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                       onError={(e) => {
                         if (e.target.src.includes('maxresdefault')) {
                           e.target.src = e.target.src.replace('maxresdefault', 'hqdefault');
                         }
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300 pointer-events-none" />
                     
                     <div className="absolute inset-0 p-3 md:p-8 flex flex-col justify-between pointer-events-none">
                       <div className="self-end bg-zinc-950/60 backdrop-blur-sm p-2 md:p-3 rounded-full border border-white/10 text-white group-hover:text-pastel-peach transition-colors group-hover:scale-110 duration-300 pointer-events-auto">
@@ -303,10 +301,10 @@
                       </div>
                       
                       <div className="transform translate-y-2 md:translate-y-4 group-hover:translate-y-0 transition-transform duration-300 pointer-events-auto">
-                        <span className="text-pastel-sage text-[10px] md:text-xs font-semibold uppercase tracking-wider mb-1 md:mb-2 block">
+                        <span className="text-pastel-sage text-[10px] md:text-xs font-semibold uppercase tracking-wider mb-1 md:mb-2 block drop-shadow-md">
                           {item.category}
                         </span>
-                        <h3 className="text-base sm:text-lg md:text-3xl font-cinematic font-bold text-white group-hover:text-pastel-blush transition-colors leading-tight">
+                        <h3 className="text-base sm:text-lg md:text-3xl font-cinematic font-bold text-white group-hover:text-pastel-blush transition-colors leading-tight drop-shadow-lg">
                           {item.title}
                         </h3>
                       </div>
@@ -322,7 +320,6 @@
                       index === 0 || index === 5 ? 'col-span-2 lg:col-span-2' : 'col-span-1'
                     }`}
                   >
-                    {/* Link hai toh Youtube khulega, nahi toh click pe Lightbox me image open hogi */}
                     {item.link ? (
                       <a href={item.link} target="_blank" rel="noopener noreferrer" className="block w-full h-full absolute inset-0 z-10">
                         {CardContent}
@@ -340,7 +337,6 @@
               })}
             </div>
 
-            {/* View More Button */}
             <FadeIn delay={200} className="mt-16 flex justify-center">
               <a href="more-work.html" className="group relative px-8 py-3.5 border border-white/20 text-zinc-300 hover:text-pastel-blush hover:border-pastel-blush font-semibold rounded-full transition-all text-sm flex items-center justify-center gap-2">
                 View More <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -354,7 +350,6 @@
             )}
           </div>
 
-          {/* Full-Screen Lightbox Modal */}
           {selectedImage && (
             <div 
               className="fixed inset-0 z-[200] bg-black/95 flex items-center justify-center p-4 md:p-10 transition-opacity duration-300"
@@ -451,13 +446,13 @@
               <div>
                 <h4 className="text-white font-semibold uppercase tracking-wider text-sm mb-4 md:mb-6">Socials</h4>
                 <div className="flex flex-col gap-3 md:gap-4">
-                  <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors text-sm md:text-base">
+                  <a href="https://www.instagram.com/sloke.mov?obrf=MXN3czYyMmZweGlrcQ==" target="_blank" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors text-sm md:text-base">
                     <Instagram size={16} className="md:w-5 md:h-5"/> Instagram
                   </a>
-                  <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors text-sm md:text-base">
-                    <Youtube size={16} className="md:w-5 md:h-5"/> Vimeo
+                  <a href="https://harvishapictures.in" target="_blank" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors text-sm md:text-base">
+                    <Globe size={16} className="md:w-5 md:h-5"/> Harvisha Pictures
                   </a>
-                  <a href="#" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors text-sm md:text-base">
+                  <a href="mailto:hello@slokepandey.in" className="text-zinc-400 hover:text-pastel-peach flex items-center gap-2 transition-colors text-sm md:text-base">
                     <Mail size={16} className="md:w-5 md:h-5"/> hello@slokepandey.in
                   </a>
                 </div>
