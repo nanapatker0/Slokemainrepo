@@ -1,146 +1,340 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#080b0f" />
-  <meta name="description" content="Harvisha Pictures — Capturing Moments • Creating Memories. Our new website is coming soon." />
-  <title>Coming Soon | Harvisha Pictures</title>
-  <style>
-    :root {
-      --bg: #080b0f;
-      --panel: rgba(255,255,255,.045);
-      --white: #f7f8fa;
-      --muted: #a6afb9;
-      --cyan: #56d9e8;
-      --line: rgba(255,255,255,.14);
-    }
-    * { box-sizing: border-box; }
-    html { min-height: 100%; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      color: var(--white);
-      background:
-        radial-gradient(ellipse at 16% 15%, rgba(39,166,189,.14), transparent 38%),
-        radial-gradient(ellipse at 90% 85%, rgba(69,94,126,.16), transparent 36%),
-        var(--bg);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      display: grid;
-      place-items: center;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 18px;
-      border: 1px solid rgba(255,255,255,.075);
-      pointer-events: none;
-    }
-    .grain {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .10;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
-    }
-    .page {
-      width: min(1120px, 100%);
-      min-height: 100vh;
-      padding: 42px 8%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      z-index: 1;
-    }
-    header, footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .brand { display: flex; align-items: center; gap: 13px; text-decoration: none; color: inherit; }
-    .monogram {
-      width: 44px; height: 44px; display: grid; place-items: center;
-      border: 1px solid var(--cyan); color: var(--cyan);
-      font-family: Georgia, "Times New Roman", serif; font-size: 17px; letter-spacing: -2px;
-      transform: rotate(-3deg);
-    }
-    .brand-name { font-size: 12px; font-weight: 750; letter-spacing: .2em; text-transform: uppercase; }
-    .brand-sub { margin-top: 4px; font-size: 9px; letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
-    .status { color: var(--muted); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 14px var(--cyan); }
-    main { padding: 76px 0 84px; max-width: 780px; }
-    .eyebrow { display: flex; align-items: center; gap: 13px; color: var(--cyan); font-size: 10px; font-weight: 700; letter-spacing: .28em; text-transform: uppercase; }
-    .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--cyan); }
-    h1 {
-      margin: 28px 0 22px; font-size: clamp(54px, 9vw, 112px);
-      line-height: .92; letter-spacing: -.075em; font-weight: 620;
-    }
-    h1 span { color: var(--cyan); font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-style: italic; letter-spacing: -.08em; }
-    .intro { max-width: 510px; color: var(--muted); font-size: clamp(14px, 1.6vw, 17px); line-height: 1.85; }
-    .rule { width: 100%; height: 1px; background: linear-gradient(90deg, var(--cyan), var(--line) 48%, transparent); margin: 38px 0 25px; }
-    .bottom-line { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 28px; }
-    .tagline { color: #e9edf1; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
-    .tagline b { color: var(--cyan); font-weight: 500; }
-    .contact {
-      display: inline-flex; align-items: center; gap: 11px; padding: 13px 17px;
-      color: var(--white); border: 1px solid var(--line); background: var(--panel);
-      text-decoration: none; font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-      transition: border-color .2s, background .2s, transform .2s;
-    }
-    .contact:hover { border-color: var(--cyan); background: rgba(86,217,232,.08); transform: translateY(-2px); }
-    .arrow { color: var(--cyan); font-size: 17px; line-height: 10px; }
-    footer { border-top: 1px solid var(--line); padding-top: 20px; color: #78828d; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; }
-    .footer-right { color: var(--muted); }
-    @media (max-width: 600px) {
-      body::before { inset: 9px; }
-      .page { padding: 30px 8%; }
-      header { align-items: flex-start; }
-      .status { font-size: 8px; letter-spacing: .1em; margin-top: 7px; }
-      .monogram { width: 39px; height: 39px; }
-      .brand-name { font-size: 10px; }
-      .brand-sub { font-size: 8px; }
-      main { padding: 85px 0 90px; }
-      h1 { font-size: clamp(53px, 15vw, 80px); }
-      .intro { font-size: 14px; }
-      footer { align-items: flex-start; flex-direction: column; gap: 9px; }
-    }
-    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sloke | Filmmaker and photographer</title>
+
+<!-- Favicon added here -->
+<link rel="icon" type="image/png" href="images/favicon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#E7EFEE;--bg2:#D7E4E3;--ink:#0E2B30;--muted:#456569;--line:rgba(14,43,48,.18);--accent:#A8570B;--on:#fff;--hdr:rgba(231,239,238,.88);
+ --f:"Syne","Arial Black",system-ui,sans-serif;
+ color-scheme:light;box-sizing:border-box;
+ padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0C2125;--bg2:#143036;--ink:#E8F0EE;--muted:#9DB8B6;--line:rgba(232,240,238,.16);--accent:#F0A24B;--on:#0C2125;--hdr:rgba(12,33,37,.88);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0C2125;--bg2:#143036;--ink:#E8F0EE;--muted:#9DB8B6;--line:rgba(232,240,238,.16);--accent:#F0A24B;--on:#0C2125;--hdr:rgba(12,33,37,.88);color-scheme:dark}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+html.lock{overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--hdr);backdrop-filter:blur(12px);z-index:10}
+img,svg{max-width:100%}
+a{color:inherit; text-decoration:none;}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1200px;margin:0 auto;padding:0 clamp(20px,5vw,48px)}
+.sec{padding:clamp(64px,10vw,120px) 0}
+h2{font:800 clamp(2rem,5vw,3.5rem)/1.05 var(--f);letter-spacing:-.02em;margin:0 0 .5em}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,48px);background:var(--hdr);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 1.45rem var(--f);letter-spacing:-.03em}
+.logo svg, .logo img {flex:none; object-fit:contain}
+.burger{width:46px;height:46px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);cursor:pointer;display:grid;place-content:center;gap:5px;padding:0}
+.burger i{display:block;width:20px;height:2px;background:currentColor;transition:transform .3s,opacity .2s}
+.burger[aria-expanded=true] i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded=true] i:nth-child(2){opacity:0}
+.burger[aria-expanded=true] i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.menu{position:fixed;inset:0;z-index:40;background:var(--bg);padding:calc(env(safe-area-inset-top,0px) + 96px) clamp(20px,6vw,72px) calc(env(safe-area-inset-bottom,0px) + 32px);display:flex;flex-direction:column;justify-content:space-between;overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(-12px);transition:opacity .3s,transform .3s,visibility 0s .3s}
+.menu.open{opacity:1;visibility:visible;transform:none;transition:opacity .3s,transform .3s}
+.menu nav{display:grid}
+.menu nav a{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:.18em 0;border-bottom:1px solid var(--line);text-decoration:none;font:800 clamp(2.3rem,9vw,5rem)/1.1 var(--f);letter-spacing:-.02em}
+.menu nav a:hover{color:var(--accent)}
+.menu nav small{font:400 .9rem system-ui,sans-serif;color:var(--muted);letter-spacing:0;text-align:right}
+.menu p{margin:32px 0 0;color:var(--muted)}
+
+/* hero */
+.hero{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:flex-end;color:#F3F6F4;min-height:max(560px,calc(100svh - 64px - env(safe-area-inset-top, 0px)))}
+.still{position:absolute;inset:0;z-index:0;}
+.still img {width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; z-index: 0;}
+/* Halka dark overlay image ke upar taaki text dikhe */
+.still::after {content:""; position:absolute; inset:0; background:rgba(0,0,0,0.4); z-index:1;}
+
+.hero::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(4,16,15,.72),rgba(4,16,15,.05) 65%),linear-gradient(0deg,rgba(4,16,15,.55),transparent 45%)}
+.bar{position:absolute;left:0;right:0;z-index:2;height:max(18px,3.5vh);background:#04100F}
+.bar.t{top:0}.bar.b{bottom:0}
+.cap{position:absolute;z-index:3;right:clamp(16px,4vw,48px);bottom:calc(max(18px,3.5vh) + 12px);font-size:.8rem;color:rgba(243,246,244,.65)}
+.hero-in{position:relative;z-index:3;max-width:1100px;padding:0 clamp(20px,6vw,72px) calc(max(18px,3.5vh) + clamp(40px,8vh,88px))}
+.hero h1{font:800 clamp(5rem,22vw,15rem)/.85 var(--f);letter-spacing:-.04em;margin:0}
+.sub{font:600 clamp(1.1rem,2.4vw,1.6rem)/1.3 var(--f);margin:.7em 0 .4em}
+.lede{max-width:46ch;margin:0 0 1.6rem;color:rgba(243,246,244,.86)}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;font:600 1rem system-ui,sans-serif;text-decoration:none;cursor:pointer}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--on)}
+
+/* about */
+.about{display:grid;gap:40px}
+.portrait{position:relative;aspect-ratio:4/5;border-radius:6px;overflow:hidden;color:#F3F6F4; background:#071a1d;}
+.portrait img {width: 100%; height: 100%; object-fit: cover;}
+.portrait .cap{left:14px;right:auto;bottom:12px; position:absolute; z-index:2;}
+.about p{max-width:52ch;margin:0 0 1em;color:var(--muted);font-size:1.05rem}
+.about p:first-of-type{color:var(--ink);font-size:1.2rem}
+.what{list-style:none;margin:28px 0 0;padding:0;border-top:1px solid var(--line)}
+.what li{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.what b{font-family:var(--f)}
+.what span{color:var(--muted);text-align:right}
+
+/* portfolio */
+.head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:20px}
+.head p{margin:0;color:var(--muted)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{min-height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);font:600 .95rem system-ui,sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.grid{display:grid;grid-auto-flow:dense;gap:14px;margin-top:36px}
+.card{position:relative;margin:0;aspect-ratio:4/3;border-radius:6px;overflow:hidden;color:#F3F6F4;background:#0C2125; display:block;}
+.card > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s;z-index:0;}
+.card:hover > img{transform:scale(1.04)}
+
+/* Link wrapper for videos inside cards */
+.card a.vid-link {display:block; width:100%; height:100%; position:absolute; inset:0; z-index:1;}
+.card a.vid-link img {width:100%; height:100%; object-fit:cover; transition:transform .6s;}
+.card:hover a.vid-link img {transform:scale(1.04);}
+
+.card figcaption{position:absolute;inset:auto 0 0;display:flex;justify-content:space-between;align-items:end;gap:12px;padding:48px 18px 16px;background:linear-gradient(transparent,rgba(4,16,15,.8)); z-index:2; pointer-events:none;}
+.card b{font:700 1.15rem/1.2 var(--f)}
+.card span{font-size:.85rem;opacity:.8;white-space:nowrap}
+.card[data-c=film]::before{content:"";position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(4,16,15,.55);border:1px solid rgba(255,255,255,.5); z-index:3; pointer-events:none;}
+.card[data-c=film]::after{content:"";position:absolute;top:24px;right:25px;width:12px;height:14px;background:#fff;clip-path:polygon(0 0,100% 50%,0 100%); z-index:3; pointer-events:none;}
+@media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}.wide{grid-column:span 2;aspect-ratio:16/9}}
+@media(min-width:860px){.about{grid-template-columns:5fr 6fr;gap:72px;align-items:center}}
+@media(min-width:960px){.grid{grid-template-columns:repeat(3,1fr)}.wide{aspect-ratio:auto}}
+
+/* footer */
+.foot{background:var(--bg2);border-top:1px solid var(--line);padding:clamp(56px,8vw,96px) 0 28px}
+.cta{font:800 clamp(1.9rem,5vw,3.6rem)/1.05 var(--f);letter-spacing:-.02em;margin:0 0 .35em}
+.mail{font:700 clamp(1.1rem,2.6vw,1.6rem) var(--f);color:var(--accent);text-underline-offset:.2em}
+.cols{display:grid;gap:36px;margin-top:56px;padding-top:40px;border-top:1px solid var(--line)}
+.foot h3{font:700 1rem var(--f);margin:0 0 14px}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.foot li a{color:var(--muted);text-decoration:none}
+.foot li a:hover{color:var(--ink)}
+.foot .brand p{margin:12px 0 0;color:var(--muted);max-width:32ch}
+.soon li{display:flex;flex-direction:column}
+.soon b{font-weight:600}
+.soon span{color:var(--muted);font-size:.9rem}
+.sub-form{display:flex;gap:8px;margin-top:18px}
+.sub-form input{flex:1;min-width:0;min-height:46px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.note{margin:8px 0 0;min-height:1.5em;color:var(--accent);font-size:.9rem}
+.legal{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+.legal a{text-decoration:none}
+@media(min-width:640px){.cols{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.cols{grid-template-columns:1.3fr 1fr 1fr 1.6fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="page">
-    <header>
-      <a class="brand" href="#" aria-label="Harvisha Pictures home">
-        <div class="monogram" aria-hidden="true">HP</div>
-        <div>
-          <div class="brand-name">Harvisha Pictures</div>
-          <div class="brand-sub">Film &amp; Photography</div>
-        </div>
-      </a>
-      <div class="status"><span class="dot"></span> New experience in progress</div>
-    </header>
 
-    <main>
-      <div class="eyebrow">The next chapter</div>
-      <h1>Something<br />beautiful is<br /><span>in frame.</span></h1>
-      <p class="intro">
-        We’re crafting a new online home for the stories we capture.
-        Wedding films, meaningful moments, and memories made to last —
-        all in one place. Our website is coming soon.
-      </p>
-      <div class="rule"></div>
-      <div class="bottom-line">
-        <div class="tagline">Capturing Moments <b>•</b> Creating Memories</div>
-        <a class="contact" href="https://www.instagram.com/harvishapictures/" target="_blank" rel="noopener noreferrer">
-          Follow our journey <span class="arrow">↗</span>
-        </a>
-      </div>
-    </main>
+<header class="nav">
+  <a class="logo" href="#home" aria-label="Sloke, back to top">
+    <img src="images/logo.png" alt="Sloke Logo" height="72">
+  </a>
+  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
+</header>
 
-    <footer>
-      <div>© <span id="year"></span> Harvisha Pictures</div>
-      <div class="footer-right">Made for stories worth remembering · Kolkata, India</div>
-    </footer>
+<div class="menu" id="menu">
+  <nav aria-label="Main">
+    <a href="#home">Home <small>Start here</small></a>
+    <a href="#about">About <small>Meet Sloke</small></a>
+    <a href="#portfolio">Portfolio <small>Films and photographs</small></a>
+    <a href="#contact">Contact <small>Start a project</small></a>
+  </nav>
+  <p>Say hello at <a href="mailto:hello@slokepandey.in">hello@slokepandey.in</a></p>
+</div>
+
+<main>
+<section class="hero" id="home">
+  <!-- Yaha picture1.jpg as a cover background image set hai -->
+  <div class="still">
+    <img src="images/picture1.jpg" alt="Cover background">
   </div>
-  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <div class="hero-in">
+    <h1>Sloke</h1>
+    <p class="sub">Filmmaker and photographer</p>
+    <p class="lede">Quiet, patient films and photographs about people, places and the light between them.</p>
+    <div class="btns">
+      <a class="btn pri" href="#portfolio">View portfolio</a>
+      <a class="btn" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="about">
+  <div class="wrap about">
+    <!-- About section portrait photo -->
+    <div class="portrait">
+      <img src="images/picture2.jpg" alt="Portrait of Sloke">
+      <span class="cap">Portrait of Sloke</span>
+    </div>
+    <div>
+      <h2>Hi, I’m Sloke.</h2>
+      <p>I’m a filmmaker and photographer drawn to small, human stories. Most of my work starts with a person, a place and enough time for something real to happen in front of the camera.</p>
+      <p>I shoot short films, documentaries and portrait series, and take commissions from brands, musicians and families. I handle the work from first idea to final grade, so the look stays consistent from the first frame to the last.</p>
+      <ul class="what">
+        <li><b>Film</b><span>Short films and documentaries</span></li>
+        <li><b>Photography</b><span>Portraits, travel and street</span></li>
+        <li><b>Commissions</b><span>Brands, musicians and families</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="portfolio" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>Portfolio</h2>
+        <p>A selection of recent films and photo series.</p>
+      </div>
+      <div class="chips" role="group" aria-label="Filter work">
+        <button class="chip" data-f="all" aria-pressed="true">All</button>
+        <button class="chip" data-f="film" aria-pressed="false">Film</button>
+        <button class="chip" data-f="photo" aria-pressed="false">Photography</button>
+      </div>
+    </div>
+    <div class="grid">
+      
+      <!-- Video / Film Card : Yaha href="" me YouTube ka link daal dijiye -->
+      <figure class="card wide" data-c="film">
+        <a href="https://youtube.com/watch?v=YOUR_VIDEO_ID" target="_blank" class="vid-link">
+          <img src="images/picture3.jpg" alt="Salt Season Thumbnail">
+        </a>
+        <figcaption><b>Salt Season</b><span>Film, 2026</span></figcaption>
+      </figure>
+
+      <!-- Photo Series Card -->
+      <figure class="card" data-c="photo">
+        <img src="images/picture4.jpg" alt="Window Light">
+        <figcaption><b>Window Light</b><span>Photo series, 2026</span></figcaption>
+      </figure>
+
+      <!-- Video / Film Card -->
+      <figure class="card" data-c="film">
+        <a href="https://youtube.com/watch?v=YOUR_VIDEO_ID" target="_blank" class="vid-link">
+          <img src="images/picture5.jpg" alt="The Last Ferry Thumbnail">
+        </a>
+        <figcaption><b>The Last Ferry</b><span>Film, 2025</span></figcaption>
+      </figure>
+
+      <!-- Photo Series Card -->
+      <figure class="card" data-c="photo">
+        <img src="images/picture6.jpg" alt="Faces of the Market">
+        <figcaption><b>Faces of the Market</b><span>Photo series, 2025</span></figcaption>
+      </figure>
+
+      <!-- Photo Series Card -->
+      <figure class="card" data-c="photo">
+        <img src="images/picture7.jpg" alt="Quiet Hours">
+        <figcaption><b>Quiet Hours</b><span>Photo series, 2025</span></figcaption>
+      </figure>
+
+      <!-- Video / Film Card -->
+      <figure class="card wide" data-c="film">
+        <a href="https://youtube.com/watch?v=YOUR_VIDEO_ID" target="_blank" class="vid-link">
+          <img src="images/picture8.jpg" alt="Monsoon Letters Thumbnail">
+        </a>
+        <figcaption><b>Monsoon Letters</b><span>Music film, 2024</span></figcaption>
+      </figure>
+
+      <!-- Photo Series Card -->
+      <figure class="card" data-c="photo">
+        <img src="images/picture9.jpg" alt="Night Bazaar">
+        <figcaption><b>Night Bazaar</b><span>Photo series, 2024</span></figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <h2 class="cta">Have a project in mind?</h2>
+    <a class="mail" href="mailto:hello@slokepandey.in">hello@slokepandey.in</a>
+
+    <div class="cols">
+      <div class="brand">
+        <a class="logo" href="#home">
+          <img src="images/logo.png" alt="Sloke Logo" height="75">
+        </a>
+        <p>Films and photographs made with patience and natural light.</p>
+      </div>
+      <nav aria-label="Quick links">
+        <h3>Quick links</h3>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#portfolio">Portfolio</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div>
+        <h3>Elsewhere</h3>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Vimeo</a></li>
+          <li><a href="#">YouTube</a></li>
+          <li><a href="#">Behance</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Future updates</h3>
+        <ul class="soon">
+          <li><b>Showreel 2027</b><span>A new three-minute reel, early next year</span></li>
+          <li><b>Prints and zine</b><span>Limited prints from Quiet Hours</span></li>
+          <li><b>Behind the scenes</b><span>Notes and frames from the shoots</span></li>
+        </ul>
+        <form class="sub-form" id="sub">
+          <label class="sr" for="em">Email address</label>
+          <input id="em" type="email" required placeholder="Your email">
+          <button class="btn pri" type="submit">Notify me</button>
+        </form>
+        <p class="note" id="subMsg" role="status"></p>
+      </div>
+    </div>
+
+    <div class="legal">
+      <span>© 2026 Sloke. All rights reserved.</span>
+      <a href="#home">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const burger=$('#burger'),menu=$('#menu');
+function setMenu(o){
+  burger.setAttribute('aria-expanded',o);
+  burger.setAttribute('aria-label',o?'Close menu':'Open menu');
+  menu.classList.toggle('open',o);
+  document.documentElement.classList.toggle('lock',o);
+}
+burger.addEventListener('click',()=>setMenu(burger.getAttribute('aria-expanded')!=='true'));
+addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
+$$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();
+  const id=a.getAttribute('href').slice(1);
+  setMenu(false);
+  if(!id)return;
+  if(id==='home')scrollTo({top:0,behavior:'smooth'});
+  else{const t=document.getElementById(id);if(t)t.scrollIntoView({behavior:'smooth'})}
+}));
+const chips=$$('.chip'),cards=$$('.card');
+chips.forEach(c=>c.addEventListener('click',()=>{
+  chips.forEach(x=>x.setAttribute('aria-pressed',x===c));
+  cards.forEach(k=>{k.hidden=c.dataset.f!=='all'&&k.dataset.c!==c.dataset.f});
+}));
+$('#sub').addEventListener('submit',e=>{
+  e.preventDefault();
+  $('#subMsg').textContent='Thanks, you’re on the list.';
+  e.target.reset();
+});
+</script>
 </body>
 </html>
